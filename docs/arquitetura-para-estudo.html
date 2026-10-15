@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hiraishin-Z80 — arquitetura e guia de estudo</title>
+<style>
+:root{--bg:#eef2f6;--paper:#fff;--ink:#182a3d;--muted:#506277;--blue:#146ca5;--green:#147547;--amber:#946000;--purple:#7152a3;--line:#d5e0e9}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}main{max-width:1200px;margin:auto;padding:30px 24px 70px}header{background:#142f48;color:white;padding:38px;border-radius:18px}h1{font-size:clamp(27px,4vw,41px);line-height:1.2;margin:12px 0}header p{color:#dbe7f1}h2{font-size:26px;line-height:1.3;margin:0 0 16px}h3{font-size:20px;margin:22px 0 8px}section{background:white;border:1px solid var(--line);padding:28px;margin-top:24px;border-radius:15px}p{margin:10px 0}a{color:var(--blue)}nav{display:flex;flex-wrap:wrap;gap:9px;margin:24px 0}nav a{background:white;padding:7px 12px;border-radius:8px;text-decoration:none;border:1px solid var(--line)}.tag{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase}.note{background:#edf6fc;border-left:4px solid var(--blue);padding:14px 18px;margin:18px 0}.pending{background:#fff6e5;border-color:#ba7a12}.muted{color:var(--muted)}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.card{border:1px solid var(--line);border-radius:12px;padding:20px}.card h3{margin-top:0}.card p{font-size:15px}.q{font-weight:650;color:#315473}.scroll{overflow:auto}svg{display:block;width:100%;min-width:850px;height:auto}table{border-collapse:collapse;width:100%;font-size:15px}th,td{text-align:left;padding:12px;border-bottom:1px solid var(--line);vertical-align:top}th{background:#edf3f8}pre{background:#f1f5f9;border:1px solid var(--line);padding:18px;border-radius:10px;overflow:auto;font:14px/1.7 ui-monospace,Menlo,Consolas,monospace;white-space:pre}li{margin:8px 0}.badge{display:inline-block;font-size:12px;border-radius:20px;background:#e9eef5;padding:3px 9px;margin-bottom:8px}.flow{display:flex;align-items:stretch;gap:12px;flex-wrap:wrap}.step{flex:1;min-width:150px;background:#f2f6fa;border:1px solid var(--line);border-radius:10px;padding:16px}.step b{display:block;color:var(--blue)}button{font:inherit;background:var(--blue);color:white;border:0;border-radius:8px;padding:10px 16px;cursor:pointer}.footer{font-size:13px;color:var(--muted);margin-top:22px}
+@media(max-width:700px){main{padding:14px}header,section{padding:20px}.cards{grid-template-columns:1fr}table{min-width:640px}}
+@media print{@page{size:A4;margin:15mm}body{background:white;font-size:10pt}main{padding:0;max-width:none}nav,button{display:none}header{background:#edf3f8;color:#182a3d;padding:20px}header p{color:#506277}h1{font-size:25pt}h2{font-size:18pt}section{border:0;border-top:1px solid #ccc;border-radius:0;padding:18px 0}.scroll{overflow:visible}svg{min-width:0}table{font-size:9pt;min-width:0}.card,.step,tr,.note{break-inside:avoid}.cards{grid-template-columns:1fr 1fr}pre{font-size:9pt}a{color:inherit}}
+</style>
+</head>
+<body><main>
+<header><div class="tag">Projeto Garagem · material de estudo · 15/10/2026</div>
+<h1>Hiraishin-Z80<br>Como as peças do computador conversam</h1>
+<p>Guilherme de Oliveira Ribeiro · Trabalho individual</p>
+<p>Exemplo de diagrama de blocos para preparar o campo 4 da proposta: componentes, relações, barramentos e seleção de dispositivos.</p></header>
+<nav><a href="#diagrama">Desenho principal</a><a href="#barramentos">Três barramentos</a><a href="#componentes">Componentes</a><a href="#exemplo">Uma leitura da ROM</a><a href="#mapas">Mapas e decodificação</a><a href="#proposta">O que entregar</a><a href="#estudo">Perguntas de estudo</a></nav>
+
+<section id="diagrama"><h2>1. O computador inteiro, visto por blocos</h2>
+<p>Comece pela caixa <strong>Z80</strong>. Ela é a CPU. As demais caixas são circuitos externos que fornecem memória, tempo, inicialização, comunicação, imagem e som.</p>
+<div class="note pending"><strong>Exemplo preliminar:</strong> Z80, vídeo e som clássicos, controle PS2 e tela HDMI são as escolhas de direção. Modelos finais, mapa de endereços, interface serial e distribuição entre placas ainda precisam de validação. Nenhuma linha deste desenho substitui a conferência elétrica pino a pino.</div>
+<div class="scroll"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 820" role="img" aria-labelledby="dt dd">
+<title id="dt">Diagrama de blocos do Hiraishin-Z80</title><desc id="dd">Clock e reset ligados ao Z80. CPU, EEPROM, RAM, decodificação e interfaces de entrada e saída conectam-se pelos barramentos. Periféricos: vídeo e memória de vídeo para tela HDMI através de conversor; som para caixa amplificada; interface PS2 para controle. A alimentação atende os circuitos conforme suas tensões.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#526d85"/></marker></defs>
+<style>.box{stroke:#45637c;stroke-width:2;rx:12}.title{font:700 21px system-ui,sans-serif;fill:#18344d}.body{font:16px system-ui,sans-serif;fill:#364e62}.small{font:14px system-ui,sans-serif;fill:#506277}.link{stroke:#526d85;stroke-width:2.5;fill:none}.bus{font:600 16px system-ui,sans-serif}</style>
+<rect width="1200" height="820" fill="white"/>
+<!-- Inputs to the CPU are short, independent paths. -->
+<rect x="90" y="50" width="210" height="90" class="box" fill="#eee8fa"/><text x="195" y="86" text-anchor="middle" class="title">RESET</text><text x="195" y="113" text-anchor="middle" class="body">inicia a CPU</text>
+<rect x="450" y="30" width="300" height="130" class="box" fill="#dceefe"/><text x="600" y="70" text-anchor="middle" class="title">CPU — Z80</text><text x="600" y="102" text-anchor="middle" class="body">executa instruções</text><text x="600" y="131" text-anchor="middle" class="small">ULA, UC, PC, IR e registradores internos</text>
+<rect x="900" y="50" width="210" height="90" class="box" fill="#eee8fa"/><text x="1005" y="86" text-anchor="middle" class="title">CLOCK</text><text x="1005" y="113" text-anchor="middle" class="body">ritmo da CPU</text>
+<path d="M300 95H450" class="link" marker-end="url(#arrow)"/><path d="M900 95H750" class="link" marker-end="url(#arrow)"/>
+<path d="M600 160V210" class="link"/>
+<!-- A bus bundle, not fictitious individual pin connections. -->
+<rect x="70" y="210" width="1060" height="105" rx="12" fill="#f2f6f9" stroke="#9aafc0" stroke-width="2"/>
+<text x="600" y="239" text-anchor="middle" class="bus" fill="#147547">ENDEREÇOS — 16 linhas: onde acessar</text>
+<text x="600" y="268" text-anchor="middle" class="bus" fill="#146ca5">DADOS — 8 linhas: conteúdo transferido</text>
+<text x="600" y="297" text-anchor="middle" class="bus" fill="#946000">CONTROLE — leitura, escrita, memória ou E/S</text>
+<path d="M180 315V355 M460 315V355 M740 315V355 M1020 315V355" class="link"/>
+<rect x="70" y="355" width="220" height="110" class="box" fill="#fff1d9"/><text x="180" y="390" text-anchor="middle" class="title">EEPROM / ROM</text><text x="180" y="420" text-anchor="middle" class="body">bootloader</text><text x="180" y="445" text-anchor="middle" class="small">mantém conteúdo sem energia</text>
+<rect x="350" y="355" width="220" height="110" class="box" fill="#e2f2e6"/><text x="460" y="390" text-anchor="middle" class="title">RAM</text><text x="460" y="420" text-anchor="middle" class="body">SO, programa e dados</text><text x="460" y="445" text-anchor="middle" class="small">memória de trabalho</text>
+<rect x="630" y="355" width="220" height="110" class="box" fill="#f9edd9"/><text x="740" y="390" text-anchor="middle" class="title">DECODIFICAÇÃO</text><text x="740" y="420" text-anchor="middle" class="body">seleciona o dispositivo</text><text x="740" y="445" text-anchor="middle" class="small">recebe endereço e controle</text>
+<rect x="910" y="355" width="220" height="110" class="box" fill="#e4edf8"/><text x="1020" y="390" text-anchor="middle" class="title">INTERFACES DE E/S</text><text x="1020" y="420" text-anchor="middle" class="body">comunicação externa</text><text x="1020" y="445" text-anchor="middle" class="small">grupo de circuitos, não um CI</text>
+<!-- Peripheral grouping uses a separate lower lane. -->
+<path d="M1020 465V510H180 M180 510V550 M600 510V550 M1020 510V550" class="link"/>
+<text x="585" y="498" text-anchor="middle" class="small">expansão do bloco E/S: cada interface possui sinais próprios de seleção</text>
+<rect x="45" y="550" width="270" height="115" class="box" fill="#e7f4fa"/><text x="180" y="583" text-anchor="middle" class="title">VÍDEO + VRAM</text><text x="180" y="612" text-anchor="middle" class="body">gera a imagem colorida</text><text x="180" y="641" text-anchor="middle" class="small">chip clássico e memória própria</text>
+<rect x="465" y="550" width="270" height="115" class="box" fill="#f4eafb"/><text x="600" y="583" text-anchor="middle" class="title">SOM + SAÍDA DE ÁUDIO</text><text x="600" y="612" text-anchor="middle" class="body">gera os efeitos sonoros</text><text x="600" y="641" text-anchor="middle" class="small">PSG e circuito de saída</text>
+<rect x="885" y="550" width="270" height="115" class="box" fill="#eaf4e0"/><text x="1020" y="583" text-anchor="middle" class="title">INTERFACE PS2</text><text x="1020" y="612" text-anchor="middle" class="body">consulta os botões</text><text x="1020" y="641" text-anchor="middle" class="small">adaptação de sinais e alimentação</text>
+<path d="M180 665V710 M600 665V710" class="link" marker-end="url(#arrow)"/><path d="M1020 665V710" class="link" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<text x="180" y="740" text-anchor="middle" class="body">AV → HDMI → tela</text><text x="600" y="740" text-anchor="middle" class="body">caixa amplificada</text><text x="1020" y="740" text-anchor="middle" class="body">controle de PlayStation 2</text>
+<rect x="45" y="775" width="1110" height="35" rx="8" fill="#f1f5f9"/><text x="600" y="798" text-anchor="middle" class="small">ALIMENTAÇÃO: 5 V no núcleo; periféricos e interfaces recebem as tensões exigidas por seus componentes.</text>
+</svg></div>
+<p class="muted"><strong>Como ler:</strong> as linhas cinzas representam conexões por grupos. Elas não dizem que todo sinal chega a todos os pinos. As cores das três linhas de texto distinguem funções; as direções exatas estão na próxima seção. As saídas de seleção do decodificador são explicadas separadamente para manter o desenho legível.</p>
+<p><strong>Alimentação, clock e reset são sinais diferentes.</strong> A fonte fornece energia; o clock fornece tempo; o reset inicia o estado da CPU. O vídeo e o som poderão precisar de clocks próprios, a definir.</p>
+</section>
+
+<section id="barramentos"><h2>2. Os três barramentos, sem misturar as funções</h2>
+<div class="cards">
+<article class="card"><h3 style="color:var(--green)">Endereços: “onde?”</h3><pre>Z80 ── endereço ──► ROM / RAM / E/S
+                └─► decodificação</pre><p>O Z80 apresenta 16 bits de endereço. Eles identificam a posição de memória ou a porta de E/S que será acessada. Na memória, 16 bits permitem 65.536 posições, antes de técnicas adicionais como bancos.</p><p>Parte das linhas pode selecionar o dispositivo e parte selecionar a posição dentro dele. O endereço não contém o byte que queremos ler.</p></article>
+<article class="card"><h3 style="color:var(--blue)">Dados: “qual conteúdo?”</h3><pre>ROM ───────────► Z80  (leitura)
+RAM ◄─────────► Z80  (leitura/escrita)
+E/S ◄─────────► Z80  (conforme periférico)</pre><p>São 8 linhas, D0 a D7. Transportam opcodes, argumentos, números e estados dos periféricos.</p><p>Uma leitura traz dados à CPU. Uma escrita leva dados da CPU ao destino. Somente o emissor selecionado deve dirigir essas linhas a cada transferência.</p></article>
+<article class="card"><h3 style="color:var(--amber)">Controle: “o que fazer?”</h3><pre>Z80 ── /MREQ, /IORQ, /RD, /WR ──►
+      decodificação, memórias e E/S</pre><p><strong>/MREQ</strong> identifica acesso à memória; <strong>/IORQ</strong>, acesso a E/S; <strong>/RD</strong>, leitura; <strong>/WR</strong>, escrita. A barra indica sinal ativo em nível baixo: ele está afirmado quando vale zero.</p><p>Este é o recorte inicial. A CPU também possui outros sinais, como /WAIT e /INT, que serão tratados no esquemático conforme a arquitetura.</p></article>
+<article class="card"><h3>O barramento interno fica onde?</h3><pre>Dentro do Z80:
+registradores ↔ caminhos internos ↔ ULA
+                 UC coordena</pre><p>PC, IR, ULA, unidade de controle e registradores pertencem à CPU. Não são CIs externos a repetir na PCB. A unidade de controle interna coordena a CPU, que expõe os sinais externos de barramento.</p><p>O somador do Logisim ajuda a entender a CPU; não precisa ser ligado externamente ao Z80 para que ele some.</p></article>
+</div>
+<div class="note"><strong>Cuidado com “RAM → IR”:</strong> a RAM fornece o byte pelo barramento externo de dados. A CPU decide seu destino interno. Durante a busca de opcode, ele alimenta a lógica de instrução; em outra etapa pode ser um argumento ou dado. A RAM não tem um fio externo ligado diretamente ao IR.</div>
+</section>
+
+<section id="componentes"><h2>3. O que cada bloco faz e com quem conversa</h2>
+<div class="scroll"><table><thead><tr><th>Bloco</th><th>Função</th><th>Relações principais</th></tr></thead><tbody>
+<tr><td><strong>Z80</strong></td><td>Busca, decodifica e executa instruções.</td><td>Recebe clock e reset; apresenta endereços e controle; lê/escreve dados nas memórias e E/S.</td></tr>
+<tr><td><strong>EEPROM usada como ROM</strong></td><td>Mantém o código inicial após desligar.</td><td>Recebe endereço e seleção/leitura; fornece bytes à CPU. A programação normalmente ocorre com gravador externo.</td></tr>
+<tr><td><strong>RAM</strong></td><td>Armazena SO carregado, programa, variáveis e pilha.</td><td>Recebe endereço, seleção e leitura/escrita; troca bytes com a CPU. O conteúdo deixa de ser garantido sem energia.</td></tr>
+<tr><td><strong>Clock</strong></td><td>Fornece o sinal periódico da CPU.</td><td>Alimenta a entrada de clock do Z80; outros circuitos síncronos podem precisar de sinais relacionados. Uma instrução pode consumir vários ciclos de clock.</td></tr>
+<tr><td><strong>Reset</strong></td><td>Coloca a CPU no estado inicial definido pelo fabricante.</td><td>Atua sobre /RESET. No Z80, a execução começa em 0000h após reset válido; precisamos mapear código inicial nesse endereço.</td></tr>
+<tr><td><strong>Decodificação</strong></td><td>Reconhece qual dispositivo deve responder.</td><td>Recebe linhas de endereço e controle; gera seleções para ROM, RAM e periféricos. Não executa instruções nem calcula o jogo.</td></tr>
+<tr><td><strong>Interface de vídeo</strong></td><td>Permite à CPU configurar a imagem e atualizar os dados gráficos.</td><td>Comunica CPU com chip de vídeo. Na alternativa TMS9918A, a VRAM é acessada por meio do VDP; não é simplesmente a RAM principal ligada em paralelo.</td></tr>
+<tr><td><strong>Memória de vídeo / VRAM</strong></td><td>Guarda padrões gráficos, atributos e dados usados pelo vídeo.</td><td>Conecta-se ao chip de vídeo por uma interface própria. O tipo de memória e possível adaptação de SRAM dependem do circuito selecionado.</td></tr>
+<tr><td><strong>Conversor AV → HDMI</strong></td><td>Adapta a saída de vídeo composto à entrada HDMI da tela.</td><td>Recebe vídeo do circuito de saída, entrega imagem ao monitor. Compatibilidade e atraso serão testados com o sinal real.</td></tr>
+<tr><td><strong>Gerador de som / PSG</strong></td><td>Produz tons e efeitos a partir de comandos.</td><td>Recebe escritas da CPU por sua interface, usa clock e envia áudio ao circuito de saída e à caixa amplificada.</td></tr>
+<tr><td><strong>Interface do controle PS2</strong></td><td>Consulta o controle e disponibiliza o estado dos botões.</td><td>Troca comandos/dados com o controle e conversa com o Z80 pelas portas de E/S. É necessário definir protocolo, temporização e tradução de níveis.</td></tr>
+<tr><td><strong>Alimentação</strong></td><td>Fornece energia com tensão e corrente adequadas.</td><td>Atende CPU, memórias e periféricos; os circuitos devem compartilhar referência de GND quando eletricamente conectados. Controle e auxiliares não devem receber 5 V por suposição.</td></tr>
+</tbody></table></div>
+<div class="note pending"><strong>Serial ainda em avaliação:</strong> uma UART/interface serial e um adaptador USB–serial podem permitir terminal, testes e carregamento. Se adotados, entram como mais um periférico de E/S. A máquina não precisa depender do Mac para executar o jogo depois de carregado, mas o procedimento exato de carga ainda será definido.</div>
+</section>
+
+<section id="exemplo"><h2>4. Uma leitura da ROM, passo a passo</h2>
+<p>Imagine que a CPU precisa buscar o byte no endereço <strong>0000h</strong>. A letra “h” indica notação hexadecimal. Este endereço inicial é do Z80; a organização restante ainda é proposta.</p>
+<div class="flow"><div class="step"><b>1. Endereço</b>O Z80 coloca 0000h nas linhas A0–A15.</div><div class="step"><b>2. Tipo de acesso</b>A CPU afirma os sinais necessários para uma leitura de memória.</div><div class="step"><b>3. Seleção</b>A decodificação reconhece que esse endereço pertence à ROM e a habilita.</div><div class="step"><b>4. Dado</b>A ROM fornece o byte nas linhas D0–D7.</div><div class="step"><b>5. Captura</b>O Z80 recebe o byte conforme a temporização do ciclo e continua a execução.</div></div>
+<p><strong>Para escrever na RAM:</strong> o Z80 fornece endereço e dado; a decodificação seleciona a RAM e os sinais de controle comandam a escrita. Os sinais têm requisitos de tempo; não basta todos mudarem “juntos”.</p>
+<p><strong>Para mover o personagem:</strong> a CPU consulta a interface do controle, o jogo atualiza a posição em RAM e envia atualizações ao vídeo. O chip de vídeo mantém a geração da imagem enquanto o Z80 continua seu trabalho.</p>
+<pre>Controle ↔ interface de entrada ↔ Z80
+                                  │
+                            jogo atualiza RAM
+                                  │
+                                  ▼
+                         interface de vídeo
+                                  │
+                            VDP ↔ VRAM
+                                  │
+                                  ▼
+                         AV → HDMI → tela</pre>
+</section>
+
+<section id="mapas"><h2>5. Mapa de memória, mapa de E/S e decodificação</h2>
+<p>Um <strong>mapa</strong> é uma tabela dizendo quais endereços pertencem a cada destino. Não é o conteúdo que está guardado nesses endereços.</p>
+<h3>Exemplo de mapa de memória</h3>
+<p>Para estudar, podemos dividir o espaço do Z80 em duas metades:</p>
+<div class="scroll"><table><thead><tr><th>Faixa ilustrativa</th><th>Capacidade</th><th>Destino</th><th>Uso</th></tr></thead><tbody><tr><td>0000h–7FFFh</td><td>32 KiB</td><td>EEPROM / ROM</td><td>Bootloader e possíveis imagens iniciais.</td></tr><tr><td>8000h–FFFFh</td><td>32 KiB</td><td>RAM</td><td>SO, aplicação, pilha e variáveis, com limites internos a definir.</td></tr></tbody></table></div>
+<p>Essa divisão é compatível em capacidade com a AT28C256 e a SRAM 62256 propostas, mas <strong>ainda não é o mapa final aprovado</strong>. Não especifica onde fica cada rotina nem resolve sozinha o carregamento.</p>
+<h3>Como o circuito reconhece a metade?</h3>
+<pre>Durante um acesso à memória:
+
+A15 = 0 → endereço na metade inferior → selecionar ROM
+A15 = 1 → endereço na metade superior → selecionar RAM
+
+A0…A14 → posição dentro da memória selecionada</pre>
+<p>O circuito combina essa condição com os sinais de acesso à memória e leitura/escrita. Não deve selecionar as memórias só por A15: um ciclo de E/S também apresenta endereço e não deve ativá-las indevidamente. O comportamento durante refresh e outros ciclos também precisa ser considerado no esquema.</p>
+<h3>E o mapa de E/S?</h3>
+<p>O Z80 distingue ciclos de memória de ciclos de E/S. Podemos atribuir portas aos periféricos. Os números abaixo <strong>não são endereços escolhidos</strong>:</p>
+<div class="scroll"><table><thead><tr><th>Periférico</th><th>O que a CPU troca</th><th>Endereço</th></tr></thead><tbody><tr><td>Vídeo</td><td>Dados gráficos, comandos e estado.</td><td>A definir conforme o VDP.</td></tr><tr><td>Som</td><td>Comandos de tom, volume e efeitos.</td><td>A definir conforme o PSG.</td></tr><tr><td>Controle</td><td>Comandos de consulta e estados dos botões.</td><td>A definir conforme a interface.</td></tr><tr><td>Serial, se adotada</td><td>Bytes recebidos/enviados e estado.</td><td>A definir.</td></tr></tbody></table></div>
+<p>A largura de decodificação das portas será escolhida explicitamente; não vamos presumir que “E/S do Z80 só tem 8 bits de endereço”. É preciso estudar como as instruções de E/S usam as linhas de endereço e quais delas nosso circuito decodificará.</p>
+<h3>Saídas do decodificador</h3><pre>Endereço + tipo de acesso
+            │
+            ▼
+      DECODIFICAÇÃO
+            ├──► seleção da ROM
+            ├──► seleção da RAM
+            ├──► seleção do vídeo
+            ├──► seleção do som
+            └──► seleção da interface do controle
+
+Dispositivo selecionado + leitura/escrita → transferência</pre>
+<p>Seleção é diferente de dado: ela autoriza um circuito a participar. O conteúdo continua percorrendo o barramento de dados.</p>
+<h3>Clock inicial</h3><p>Planejamos avaliar um oscilador ativo de <strong>1 MHz, 5 V e saída CMOS</strong> para os primeiros testes. Frequência, níveis e temporização precisam ser compatíveis com a CPU real comprada. A frequência final e os clocks de vídeo/som serão definidos após os testes. Um cristal isolado não substitui um módulo oscilador ativo.</p>
+</section>
+
+<section id="proposta"><h2>6. O que transformar em resposta do campo 4</h2>
+<p>O professor pede a organização prevista. O documento final de 1–2 páginas precisará de uma versão compacta deste material de estudo.</p>
+<ol><li><strong>Desenho:</strong> CPU, memórias, clock/reset, decodificação e E/S com os barramentos identificados.</li><li><strong>Mapa de memória:</strong> faixas de ROM e RAM, indicando como o código de boot aparece no reset.</li><li><strong>Mapa de E/S:</strong> portas e função de cada periférico, após fechar as interfaces.</li><li><strong>Clock:</strong> fonte do sinal e frequência prevista.</li><li><strong>Decodificação:</strong> quais linhas e sinais selecionam cada destino; CIs escolhidos após revisar o circuito.</li></ol>
+<div class="note pending"><strong>Campo 4 ainda não respondido definitivamente.</strong> Este arquivo é um exemplo para estudo. Antes de fechar a resposta: escolher VDP/VRAM, PSG, interface do controle, comunicação/carregamento e conferir o esquemático mínimo e a disponibilidade das peças.</div>
+<p>O diagrama de blocos não determina se teremos uma PCB única ou módulos. Essa distribuição permanece compatível com o campo 9 aprovado: placa principal com o núcleo e periféricos integrados ou auxiliares conforme validação.</p>
+</section>
+
+<section id="estudo"><h2>7. Perguntas para você testar seu entendimento</h2>
+<ol><li>Quem escolhe o endereço: CPU ou RAM?</li><li>Qual é a diferença entre endereço e dado?</li><li>Como a CPU distingue ler a ROM de consultar o controle?</li><li>Por que o decodificador precisa observar sinais de controle, além do endereço?</li><li>O que aconteceria se ROM e RAM dirigissem o barramento de dados ao mesmo tempo?</li><li>Onde ficam ULA, PC e IR no nosso computador com Z80?</li><li>Por que EEPROM e RAM são necessárias, se ambas guardam bytes?</li><li>Por que a memória de vídeo não é automaticamente a RAM principal?</li><li>Qual o caminho completo entre apertar um botão e ver o personagem se mover?</li><li>O que ainda precisa ser decidido para desenhar o esquema elétrico?</li></ol>
+<p class="q">Meta de estudo: conseguir redesenhar as caixas e explicar uma leitura da ROM e uma escrita na RAM sem consultar o texto.</p>
+</section>
+
+<section><h2>8. Referências para aprofundar</h2>
+<p>Os links abaixo são referências técnicas, não indicação de compra. Este documento sintetiza conceitos já discutidos e separa escolhas preliminares de decisões aprovadas.</p>
+<ul><li><a href="https://www.zilog.com/docs/z80/z80cpu_um.pdf">Zilog — manual da CPU Z80</a>: arquitetura, barramentos, instruções e ciclos.</li><li><a href="https://www.zilog.com/docs/z80/ps0178.pdf">Zilog — especificação elétrica da família Z80</a>: pinagem, reset e temporização; conferir a variante adquirida.</li><li><a href="https://www.microchip.com/en-us/product/at28c256">Microchip — AT28C256</a>: EEPROM paralela.</li><li><a href="https://www.alliancememory.com/wp-content/uploads/AS6C62256-23-March-2016-rev1.2.pdf">Alliance Memory — AS6C62256</a>: SRAM principal candidata.</li><li><a href="https://github.com/jblang/TMS9918A">J. B. Lang — módulo TMS9918A</a>: exemplo de interface de vídeo e adaptação de memória; não é o nosso circuito final.</li></ul>
+</section>
+<p style="margin-top:25px"><button onclick="window.print()">Imprimir / salvar em PDF</button></p>
+<p class="footer">Material de estudo v1 · Hiraishin-Z80 · Guilherme de Oliveira Ribeiro · 15/10/2026. O desenho é lógico; não seguir suas linhas como pinagem de montagem. Próxima revisão: arquitetura elétrica e endereços definidos.</p>
+</main></body></html>
