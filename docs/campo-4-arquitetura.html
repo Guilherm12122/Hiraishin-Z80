@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Hiraishin-Z80 · Campo 4 e estudo da arquitetura</title>
+<style>
+:root{color-scheme:light}*{box-sizing:border-box}body{margin:0;background:#edf2f6;color:#193047;font:17px/1.65 system-ui,sans-serif}main{max-width:1150px;margin:auto;padding:26px}header{background:#18344e;color:white;padding:32px;border-radius:14px}section{background:white;margin-top:22px;padding:28px;border-radius:12px}h1,h2,h3{line-height:1.3}h1{font-size:32px}h2{font-size:25px}h3{font-size:20px}a{color:#126293}header a{color:#bfe7ff}nav{display:flex;flex-wrap:wrap;gap:16px;margin:20px 0}img{width:100%;height:auto}table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:12px;border-bottom:1px solid #d7e1e9;text-align:left;vertical-align:top}th{background:#eaf1f7}.scroll{overflow:auto}.note{border-left:4px solid #1774a4;background:#edf6fc;padding:16px;margin:18px 0}.warning{border-color:#b37813;background:#fff6df}pre{white-space:pre-wrap;background:#edf2f6;padding:18px;font:14px/1.7 ui-monospace,monospace}li{margin:9px 0}.answer{border:1px solid #d7e1e9;padding:18px;margin:16px 0;border-radius:8px}.small{font-size:14px}button{font:inherit;padding:9px 16px;cursor:pointer}dt{font-weight:bold;margin-top:18px}dd{margin:5px 0 0} @media print{@page{size:A4;margin:14mm}body{font-size:10pt;background:white}main{padding:0}nav,button{display:none}section{padding:12px 0}header{background:white;color:#193047;padding:0}h1{font-size:22pt}h2{font-size:16pt}table{font-size:9pt}tr,.note,.answer{break-inside:avoid}#figura{break-before:page;break-after:page}}
+</style></head><body><main>
+<header><p>Projeto Garagem · versão 1.0 · 15/10/2026</p><h1>Hiraishin-Z80: arquitetura do campo 4</h1><p>Guilherme de Oliveira Ribeiro · Trabalho individual</p><p>Diagrama e decisões definidos para a proposta. Guia de estudo da mesma arquitetura, sem uma segunda versão de componentes ou endereços.</p></header>
+<nav><a href="#resposta">Resposta do campo 4</a><a href="#figura">Diagrama oficial</a><a href="#memoria">Mapa de memória</a><a href="#io">Mapa de E/S</a><a href="#decode">Decodificação</a><a href="#entender">Entender o desenho</a><a href="#defesa">Defesa oral</a><a href="#fontes">Fontes</a></nav>
+<button onclick="window.print()">Imprimir / salvar PDF</button>
+<div class="note warning"><strong>O que significa “final”:</strong> esta é a arquitetura definida para entregar no campo 4 da proposta, não mais um exemplo genérico. É uma decisão de projeto, não uma alegação de hardware já montado ou validado. Não autoriza encomendar PCB ou comprar todos os periféricos sem conferir o esquemático. Mudanças futuras deverão ter justificativa e histórico.</div>
+
+<section id="resposta"><h2>1. Texto para o campo 4 da proposta</h2>
+<div class="answer"><p>O Hiraishin-Z80 utilizará uma CPU Z80 Z0840006PSC, com barramento de dados de 8 bits e endereços de 16 bits, EEPROM paralela AT28C256 de 32 KiB em 0000h–7FFFh e SRAM 62256 de 32 KiB em 8000h–FFFFh. A ROM conterá o bootloader e a imagem do sistema operacional; após o reset em 0000h, o boot inicializará a serial, copiará o sistema para a RAM e transferirá sua execução para 8000h.</p>
+<p>A E/S será isolada do espaço de memória, acessada por IN/OUT: UART PC16550D para terminal e envio de programas; TMS9918A com 16 KiB de VRAM dedicada para vídeo colorido; SN76489AN para efeitos sonoros; e 82C55A para comunicar com um controle PlayStation 2 por software e adaptação elétrica. O vídeo composto será convertido para HDMI. O computador executará o jogo; o Mac será usado para desenvolvimento, terminal e envio de arquivos, não para processar o jogo.</p>
+<p>O clock inicial da CPU será de 1 MHz, gerado por oscilador ativo de 5 V e driver compatível com a entrada de clock da CPU NMOS. A decodificação utilizará A15 e sinais de acesso à memória para selecionar ROM/RAM; um 74HCT138, com A7–A5 e qualificação de E/S, selecionará as janelas de periféricos. Portas HCT complementarão a lógica de leitura/escrita e de exclusão de refresh/reconhecimento de interrupção. Os mapas e o diagrama abaixo integram esta definição.</p></div>
+<p class="small">Este bloco é a resposta técnica; o restante do documento explica e detalha sua fundamentação. O PDF final da proposta terá os 13 campos e precisará ser condensado ao limite do professor.</p></section>
+
+<section id="figura"><h2>2. Diagrama oficial para o campo 4</h2><a href="diagrama-oficial.svg">Abrir o desenho em tamanho completo</a><img src="diagrama-oficial.svg" alt="Diagrama oficial com CPU, memórias, barramentos, decodificação, clock, reset e quatro interfaces de E/S"><p class="small">As ligações ao retângulo de barramentos representam conjuntos de sinais, não fios unidos. As linhas de seleção /CS estão descritas na seção 5, evitando cruzamentos no desenho.</p></section>
+
+<section id="memoria"><h2>3. Mapa de memória: onde ficam os bytes</h2><p>A CPU enxerga 65.536 posições, cada uma com um byte. Dividimos o espaço em duas metades, sem bancos de memória nem troca de ROM/RAM.</p>
+<div class="scroll"><table><thead><tr><th>Faixa</th><th>Tamanho</th><th>Dispositivo</th><th>Uso definido</th></tr></thead><tbody>
+<tr><td>0000h–3FFFh</td><td>16 KiB</td><td>Primeira metade da EEPROM</td><td>Boot, vetores e rotinas de diagnóstico. A primeira instrução fica em 0000h.</td></tr>
+<tr><td>4000h–7FFFh</td><td>16 KiB</td><td>Segunda metade da mesma EEPROM</td><td>Imagem inicial do SO, montada para executar a partir de 8000h e copiada para lá pelo boot.</td></tr>
+<tr><td>8000h–BFFFh</td><td>16 KiB</td><td>SRAM</td><td>SO em execução, seus dados e buffers.</td></tr>
+<tr><td>C000h–EFFFh</td><td>12 KiB</td><td>Mesma SRAM</td><td>Programa-vitrine carregado pela serial, incluindo dados do programa.</td></tr>
+<tr><td>F000h–FFFFh</td><td>4 KiB</td><td>Mesma SRAM</td><td>Área reservada à pilha e trabalho auxiliar. SP inicial em FFFEh; a pilha cresce para endereços menores.</td></tr>
+</tbody></table></div>
+<p><strong>Não são cinco chips:</strong> são cinco regiões de software em apenas dois chips de memória. O início do programa será C000h. O formato de carga incluirá tamanho, endereço e verificação; sua implementação pertence ao desenvolvimento do SO.</p>
+<p>Os 16 KiB de VRAM são separados desses 64 KiB. A CPU transfere dados ao VDP pelas portas, e o VDP acessa sua própria memória. O circuito de VRAM será um módulo dedicado com adaptação SRAM, não uma ligação direta de uma 62256 aos pinos de DRAM do TMS9918A.</p>
+<div class="note">Caminho do boot: <strong>ROM 0000h → inicialização da UART e da pilha → cópia de 4000h para 8000h → salto para 8000h → comandos do SO → carga do programa em C000h.</strong> O boot pode copiar uma área fixa preenchida até 16 KiB. Não estamos prometendo que o código já existe.</div></section>
+
+<section id="io"><h2>4. Mapa de E/S: endereços para falar com circuitos</h2>
+<p>Os mesmos números não confundem memória e periféricos: a CPU usa sinais diferentes para identificar cada tipo de acesso. Os endereços abaixo são portas de E/S, não posições dentro da RAM.</p>
+<div class="scroll"><table><thead><tr><th>Janela física</th><th>Endereços usados pelo software</th><th>Destino e função</th></tr></thead><tbody>
+<tr><td>00h–1Fh</td><td>00h–07h</td><td>UART PC16550D: oito registros, selecionados por A2–A0. O sentido e DLAB determinam a função de alguns registros.</td></tr>
+<tr><td>20h–3Fh</td><td>20h / 21h</td><td>TMS9918A: porta de dados / porta de controle na escrita e status na leitura, usando A0.</td></tr>
+<tr><td>40h–5Fh</td><td>40h, somente escrita</td><td>SN76489AN: envio dos comandos de som.</td></tr>
+<tr><td>60h–7Fh</td><td>60h, 61h, 62h, 63h</td><td>82C55A: portas A, B, C e controle, selecionadas por A1–A0. Saídas de comando/clock/seleção e entradas de dados do gamepad.</td></tr>
+<tr><td>80h–FFh</td><td>Não utilizados</td><td>Reservados a expansão; nenhum dispositivo da versão 1.0 responde.</td></tr>
+</tbody></table></div>
+<h3>Por que existem janelas maiores?</h3><p>Para reduzir a lógica, o decodificador usa apenas A7–A5 para escolher cada periférico. Bits intermediários não usados provocam <strong>espelhamento</strong>: na UART, por exemplo, 00h, 08h, 10h e 18h acessam o mesmo registro. O software usará só as portas canônicas da tabela. Não instalaremos outro dispositivo nos espelhos.</p>
+<p>Também ignoraremos A15–A8 em acessos de E/S; portanto há espelhos no espaço de E/S de 16 bits do Z80. Isso é uma escolha explícita do nosso circuito, não uma limitação de endereçamento do processador.</p>
+<p>O controle será consultado pelo Z80 através do 82C55A, com protocolo implementado no nosso software. Não é teclado PS/2. Haverá regulação e tradução de níveis entre o domínio de 5 V e o controle. A pinagem e a tensão do gamepad real serão verificadas antes de ligá-lo; vibração não faz parte da versão inicial.</p></section>
+
+<section id="decode"><h2>5. Como o circuito escolhe quem responde</h2><p>“Decodificar endereço” significa reconhecer uma faixa e habilitar seu destino. Não é decodificar a instrução: essa outra tarefa acontece dentro da CPU.</p>
+<h3>Memória: A15 divide o espaço</h3><pre>Se /MREQ = 0 e /RFSH = 1:
+    A15 = 0 → seleciona EEPROM (0000h–7FFFh)
+    A15 = 1 → seleciona SRAM   (8000h–FFFFh)
+
+Se /RD = 0 → o chip selecionado fornece o byte.
+Se /WR = 0 → somente a SRAM selecionada pode gravar.</pre>
+<p>A0–A14 chegam às duas memórias; A15 participa da seleção. A EEPROM terá /WE mantido inativo e será gravada externamente. Qualificar /RD e /WR impede dirigir dados ou escrever durante ciclos inadequados; excluímos explicitamente refresh da seleção normal.</p>
+<h3>E/S: um 74HCT138 escolhe uma entre oito janelas</h3><pre>Habilitar decodificador quando /IORQ = 0 e /M1 = 1.
+Entradas A, B, C do 74HCT138 ← A5, A6, A7 do Z80.
+Y0 → UART     (00h–1Fh)
+Y1 → vídeo    (20h–3Fh)
+Y2 → som      (40h–5Fh, qualificado por escrita)
+Y3 → 82C55A   (60h–7Fh)
+Y4–Y7 → sem dispositivo conectado.</pre>
+<p>As saídas do 138 são ativas em zero. A qualificação por /M1 impede selecionar periféricos num reconhecimento de interrupção. Portas 74HCT04, 74HCT32 e/ou 74HCT00 implementarão inversões e combinações; a quantidade será determinada pelo esquemático, não pelo desenho de blocos.</p>
+<div class="note"><strong>Regra essencial:</strong> só um dispositivo pode fornecer dados ao barramento em uma leitura. Cada chip não selecionado deve deixar sua saída em alta impedância. O decodificador evita a disputa; ele não “transporta o byte” no lugar da memória.</div>
+<p>A lógica HCT tem níveis de entrada compatíveis com saídas TTL do Z80 NMOS. O fan-out, a carga dos barramentos e eventual necessidade de buffers serão verificados. O som exigirá respeito a READY e à duração da escrita: implementaremos extensão de ciclo por /WAIT e lógica temporizada, não apenas um fio improvisado entre os dois sinais.</p></section>
+
+<section id="tempo"><h2>6. Clock, reset e implementação</h2><ul>
+<li><strong>CPU:</strong> 1 MHz inicial, oscilador ativo de 5 V e driver com níveis e bordas compatíveis com o Z0840006PSC NMOS. Um cristal passivo não gera esse sinal sozinho. Não usaremos clock manual nem parada de clock como técnica de depuração dessa CPU.</li>
+<li><strong>Serial:</strong> referência de 1,8432 MHz, inicialmente 9.600 baud, 8 bits, sem paridade e um bit de parada; consulta de status por software. O adaptador USB–TTL deverá ter níveis compatíveis, não sinais RS-232 diretamente nos CIs.</li>
+<li><strong>Vídeo:</strong> referência de 10,738635 MHz, circuito de VRAM e saída composta no módulo do TMS9918A; conversão externa para HDMI. O conversor será testado com o sinal real antes da PCB.</li>
+<li><strong>Som:</strong> referência de 3,579545 MHz para o SN76489AN; saída condicionada para amplificação. Não ligar alto-falante diretamente ao PSG.</li>
+<li><strong>Reset:</strong> circuito de partida e botão; manter /RESET ativo com clock estável pelo tempo exigido. A polaridade de reset dos periféricos será adaptada. Antes de usar pilha, o boot inicializa SP na SRAM.</li>
+<li><strong>Alimentação:</strong> núcleo regulado a 5 V, GND comum, desacoplamento por CI e regulação específica para o controle. Fonte e distribuição dimensionadas pelo consumo total.</li>
+</ul><p>Primeiro montaremos o núcleo e a serial em protoboard. Depois acrescentaremos vídeo, som e gamepad por módulos. A PCB principal conterá CPU, memórias, clock/reset, decodificação, serial e conectores; expansões poderão manter os circuitos de vídeo, som e controle em placas próprias.</p>
+<div class="note warning"><strong>Limite real:</strong> isso não é um MSX nem um NES compatível. O jogo será autoral, inicialmente de tela fixa, sem promessa de executar a ROM original de Super Mario Bros. O clock inicial e os 12 KiB do programa terão seu desempenho e ocupação medidos.</div></section>
+
+<section id="entender"><h2>7. Agora vamos entender o diagrama de verdade</h2><dl>
+<dt>CPU: quem faz o trabalho?</dt><dd>O Z80 executa o nosso código. A ULA soma, os registradores guardam valores temporários e o controle interno coordena a execução. Esses blocos já estão dentro do chip. Não compraremos uma ULA externa.</dd>
+<dt>EEPROM: por que duas memórias?</dt><dd>Precisamos que a máquina saiba o que fazer ao ligar. A EEPROM preserva o boot e a imagem do SO sem energia; a RAM recebe o código que executaremos e permite alterar dados continuamente.</dd>
+<dt>O PC aponta para qual memória?</dt><dd>Ele contém um endereço, não o nome do chip. No início aponta para 0000h. O circuito externo reconhece essa faixa como ROM. Depois do salto para 8000h, as buscas vêm da RAM.</dd>
+<dt>Quem leva o byte até a CPU?</dt><dd>As oito linhas de dados. As linhas de endereço dizem onde buscar; os sinais de controle dizem que é uma leitura; o decodificador seleciona quem pode responder.</dd>
+<dt>Por que a serial entra num videogame?</dt><dd>É nosso canal de desenvolvimento e diagnóstico. Primeiro veremos mensagens no terminal; depois enviaremos programas para RAM sem retirar a EEPROM a cada alteração do jogo. A CPU local continua executando tudo.</dd>
+<dt>O VDP é outra CPU?</dt><dd>Não é a CPU do jogo. Ele gera o sinal de vídeo a partir de gráficos, posições e configurações enviados pelo Z80. Sua VRAM é uma memória separada para esses dados visuais.</dd>
+<dt>O controle escreve na RAM?</dt><dd>Não diretamente. O Z80 envia os comandos e lê as respostas pelo 82C55A. O jogo interpreta os botões, altera posições na RAM e atualiza o vídeo.</dd>
+<dt>Som: quem escolhe as notas?</dt><dd>Nosso programa envia comandos ao PSG. O PSG gera as ondas sonoras; o circuito de áudio as entrega à amplificação. Sem comandos corretos, o chip não “entende” os eventos do jogo.</dd>
+<dt>O clock faz uma instrução por pulso?</dt><dd>Não. Uma instrução pode usar vários ciclos de clock e acessos ao barramento. 1 MHz significa um milhão de períodos do clock por segundo, não um milhão de instruções por segundo.</dd>
+</dl>
+<h3>Exemplo A: a primeira instrução</h3><ol><li>A alimentação estabiliza; reset é aplicado enquanto o clock funciona.</li><li>Após liberar o reset, o Z80 busca em 0000h.</li><li>O endereço vai por A0–A15; o controle indica leitura de memória.</li><li>A decodificação seleciona a EEPROM; ela fornece o byte por D0–D7.</li><li>A CPU interpreta o opcode. Caso precise de outros bytes, faz novas leituras. Nem todo byte lido é um opcode.</li><li>O boot configura SP e serial, copia a imagem do SO e salta para a RAM.</li></ol>
+<h3>Exemplo B: o jogador aperta “pular”</h3><ol><li>O jogo consulta o controle usando entradas e saídas do 82C55A.</li><li>O Z80 interpreta a resposta e calcula a nova posição usando seus registradores e ULA.</li><li>Guarda o estado do personagem na SRAM.</li><li>Escreve na porta de controle do VDP para escolher um endereço de VRAM e depois na porta de dados para atualizar a informação gráfica.</li><li>Envia um comando ao PSG, respeitando o tempo de aceitação, para o efeito de pulo.</li><li>O vídeo continua sendo gerado pelo VDP enquanto a CPU executa o restante do jogo.</li></ol></section>
+
+<section id="defesa"><h2>8. Perguntas de defesa — explique sem decorar</h2><p>Leia a pergunta, tente responder em voz alta e só depois confira. Se a resposta ainda não fizer sentido, esse item ainda não está dominado.</p>
+<div class="answer"><strong>Por que a ROM começa em 0000h?</strong><p>Porque o Z80 inicia a busca nesse endereço após reset. Sem código válido ali, o boot não começa corretamente.</p></div>
+<div class="answer"><strong>Como 32 KiB de ROM e 32 KiB de RAM cabem?</strong><p>O endereço de 16 bits permite 64 KiB. A15 separa as duas metades de 32 KiB; os outros 15 bits selecionam o byte dentro de cada chip.</p></div>
+<div class="answer"><strong>O endereço 20h é vídeo ou ROM?</strong><p>Depende do tipo de acesso: leitura de memória em 0020h acessa ROM; IN/OUT na porta 20h acessa o vídeo. /MREQ e /IORQ distinguem os espaços.</p></div>
+<div class="answer"><strong>Onde está a UC do desenho?</strong><p>Dentro do Z80. A decodificação externa seleciona chips; não substitui a unidade de controle interna.</p></div>
+<div class="answer"><strong>Por que usar HCT em vez de escolher qualquer HC?</strong><p>As entradas precisam reconhecer os níveis de saída garantidos pela CPU NMOS. HCT é compatível com níveis TTL; ter a mesma alimentação não garante compatibilidade de níveis.</p></div>
+<div class="answer"><strong>Por que o controle não vai direto aos 5 V?</strong><p>Alimentação e sinais do gamepad têm requisitos próprios. Precisamos conferir o controle real, regular a tensão e adaptar os níveis, não supor compatibilidade.</p></div>
+<div class="answer"><strong>O que acontece se dois chips enviarem bytes juntos?</strong><p>Pode haver conflito elétrico e dado inválido. Seleção e habilitação de saída devem garantir um só emissor por leitura.</p></div>
+<div class="answer"><strong>O que o Mac faz na demonstração?</strong><p>Pode servir como terminal e enviar o binário. Quem carrega em RAM e executa o programa é o nosso sistema no Z80. Não é emulação do jogo no Mac.</p></div>
+<div class="note"><strong>Regra de autoria e IA:</strong> este documento foi produzido com assistência de IA e deve ser revisado, criticado e testado pelo autor. Não devemos declarar domínio nem funcionamento com base apenas neste texto. A defesa, os testes e o histórico de decisões precisam demonstrar entendimento real.</div></section>
+
+<section><h2>9. Critérios para validar a arquitetura no desenvolvimento</h2><ol><li>Simular a seleção de memória e E/S, inclusive todos os espelhos, refresh e reconhecimento de interrupção; nenhuma leitura pode habilitar dois emissores.</li><li>Conferir a marcação e o encapsulamento das peças: SRAM KM62256DLP-7 em DIP-28; não confundir com DLG/SOP.</li><li>Revisar o esquema com datasheets: clock NMOS, reset, sinais não usados, tempos de acesso, pulsos de escrita, carga e níveis.</li><li>Na bancada: alimentação e clock primeiro; depois ROM e mensagem serial; teste de escrita/leitura da RAM; cópia e execução do SO.</li><li>Verificar carga por serial, tamanho/checksum e retorno do programa ao SO.</li><li>Testar vídeo/HDMI, VRAM, áudio e gamepad isoladamente, depois integrar.</li><li>Somente após esses testes, revisar o esquemático e liberar a PCB para fabricação.</li></ol><p>Os modelos de UART, vídeo, som e GPIO são escolhas desta versão da proposta, não peças que o autor declarou já possuir. A aquisição e o projeto da adaptação SRAM do vídeo têm risco de disponibilidade e prazo. Se precisarem mudar, atualizaremos diagrama, mapas e justificativa juntos.</p></section>
+
+<section id="fontes"><h2>10. Referências técnicas e rastreabilidade</h2><p>Os mapas, as faixas e a organização do boot são decisões do Hiraishin-Z80. Os documentos abaixo fundamentam as interfaces dos componentes; não são um projeto copiado.</p><ul>
+<li><a href="https://www.zilog.com/docs/z80/z80cpu_um.pdf">Zilog — Z80 CPU User Manual</a>: instruções, barramentos, reset e ciclos.</li>
+<li><a href="https://www.grimware.org/lib/exe/fetch.php/documentations/devices/z80/datasheets/z80.product.specification.1989.zilog.pdf">Zilog — especificação NMOS/CMOS (1989), cópia arquivada</a>: conferir limites da variante NMOS.</li>
+<li><a href="https://www.microchip.com/en-us/product/at28c256">Microchip — AT28C256</a>: EEPROM paralela.</li>
+<li><a href="https://www.knjn.com/datasheets/KM62256D.pdf">Samsung — KM62256D Family, cópia arquivada</a>: SRAM e encapsulamentos.</li>
+<li><a href="https://www.ti.com/lit/ds/symlink/sn74hct138.pdf">Texas Instruments — SN74HCT138</a>: seleção de saídas ativas em nível baixo.</li>
+<li><a href="https://media.digikey.com/pdf/Data%20Sheets/Texas%20Instruments%20PDFs/PC16550D.pdf">Texas Instruments — PC16550D, cópia arquivada</a>: UART e registros.</li>
+<li><a href="https://computers.baffa.tec.br/pages/datasheet/TMS9918A_TMS9928A_TMS9929A_Video_Display_Processors_Data_Manual_Nov82.pdf">Texas Instruments — TMS9918A Data Manual, cópia arquivada</a>: vídeo, VRAM e acesso pela CPU.</li>
+<li><a href="https://ftp.whtech.com/datasheets%20and%20manuals/Datasheets%20-%20TI/SN76489.pdf">Texas Instruments — SN76489AN, cópia arquivada</a>: escrita e READY.</li>
+<li><a href="https://www.renesas.com/document/dst/82c55a-datasheet">Renesas — 82C55A</a>: portas programáveis.</li>
+</ul><p class="small">Escolhas de protocolo e pinagem do gamepad, adaptação de VRAM, lógica de espera e layout serão documentadas na implementação. O diagrama de blocos não afirma que esses esquemas já estão concluídos.</p></section>
+</main></body></html>

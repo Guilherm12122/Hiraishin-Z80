@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1080" viewBox="0 0 1400 1080" role="img" aria-labelledby="title desc">
+<title id="title">Hiraishin-Z80 — arquitetura proposta, campo 4, versão 1.0</title>
+<desc id="desc">CPU Z80 com clock e reset; ROM de 32 KiB, RAM de 32 KiB e periféricos UART, vídeo TMS9918A, som SN76489AN e interface 82C55A para controle PlayStation 2. Os três barramentos são apresentados como um conjunto de conexões; decodificadores geram as seleções.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#445c73"/></marker></defs>
+<style>text{font-family:Arial,sans-serif;fill:#163149} .h{font-size:25px;font-weight:bold}.t{font-size:19px;font-weight:bold}.s{font-size:16px}.n{font-size:14px}.box{stroke:#45637c;stroke-width:2;rx:12}.line{stroke:#445c73;stroke-width:2;fill:none}.bus{stroke:#445c73;stroke-width:4;fill:none}</style>
+<rect width="1400" height="1080" fill="white"/>
+<text x="50" y="43" class="h">Hiraishin-Z80 — arquitetura para a proposta · v1.0</text>
+<text x="50" y="72" class="s">Guilherme de Oliveira Ribeiro · Campo 4 · 15/10/2026</text>
+<rect x="70" y="105" width="260" height="95" class="box" fill="#eee7fa"/><text x="200" y="141" text-anchor="middle" class="t">RESET</text><text x="200" y="172" text-anchor="middle" class="s">partida e reinicialização</text>
+<rect x="475" y="100" width="450" height="110" class="box" fill="#dcedfc"/><text x="700" y="135" text-anchor="middle" class="t">CPU Z80 — Z0840006PSC</text><text x="700" y="164" text-anchor="middle" class="s">PC, ULA, controle e registradores internos</text><text x="700" y="191" text-anchor="middle" class="s">primeira busca em 0000h</text>
+<rect x="1070" y="105" width="260" height="95" class="box" fill="#eee7fa"/><text x="1200" y="141" text-anchor="middle" class="t">CLOCK · 1 MHz</text><text x="1200" y="172" text-anchor="middle" class="s">oscilador ativo + driver</text>
+<path d="M330 153H475 M1070 153H925" class="line" marker-end="url(#arrow)"/>
+<path d="M700 210V250" class="bus"/>
+<rect x="60" y="250" width="1280" height="110" rx="12" fill="#f0f4f8" stroke="#45637c" stroke-width="2"/>
+<text x="85" y="280" class="t">CONJUNTO DE BARRAMENTOS EXTERNOS</text>
+<text x="85" y="310" class="s">Endereços: A0–A15 · CPU → destinos      |      Dados: D0–D7 · CPU ↔ memórias / E/S</text>
+<text x="85" y="338" class="s">Controle: /MREQ, /IORQ, /RD, /WR e qualificação por /M1 e /RFSH · não é um único fio</text>
+<!-- Linha estrutural: cada ramal representa o conjunto aplicável de sinais, não um curto entre eles. -->
+<path d="M185 360V410 M515 360V410 M845 360V410 M1175 360V410" class="bus"/>
+<rect x="60" y="410" width="250" height="115" class="box" fill="#fff1d4"/><text x="185" y="443" text-anchor="middle" class="t">EEPROM · AT28C256</text><text x="185" y="473" text-anchor="middle" class="s">32 KiB · 0000h–7FFFh</text><text x="185" y="502" text-anchor="middle" class="s">boot + imagem do SO</text>
+<rect x="390" y="410" width="250" height="115" class="box" fill="#e0f3e6"/><text x="515" y="443" text-anchor="middle" class="t">SRAM · 62256</text><text x="515" y="473" text-anchor="middle" class="s">32 KiB · 8000h–FFFFh</text><text x="515" y="502" text-anchor="middle" class="s">SO, programa e pilha</text>
+<rect x="720" y="410" width="250" height="115" class="box" fill="#f5e5d9"/><text x="845" y="443" text-anchor="middle" class="t">DECODIFICAÇÃO</text><text x="845" y="473" text-anchor="middle" class="s">74HCT138 + portas HCT</text><text x="845" y="502" text-anchor="middle" class="s">gera /CS de cada destino</text>
+<rect x="1050" y="410" width="250" height="115" class="box" fill="#dcedfc"/><text x="1175" y="443" text-anchor="middle" class="t">E/S MAPEADA EM PORTAS</text><text x="1175" y="473" text-anchor="middle" class="s">00h–7Fh · quatro janelas</text><text x="1175" y="502" text-anchor="middle" class="s">detalhes no mapa abaixo</text>
+<text x="60" y="560" class="s">Seleções /CS vão da decodificação às memórias e E/S; omitidas graficamente para não cruzar os barramentos.</text>
+<path d="M1175 525V590H185 M185 590V630 M515 590V630 M845 590V630 M1175 590V630" class="line"/>
+<rect x="60" y="630" width="250" height="115" class="box" fill="#e8f0f9"/><text x="185" y="664" text-anchor="middle" class="t">SERIAL · PC16550D</text><text x="185" y="694" text-anchor="middle" class="s">registros 00h–07h</text><text x="185" y="722" text-anchor="middle" class="s">referência 1,8432 MHz</text>
+<rect x="390" y="630" width="250" height="115" class="box" fill="#e8f0f9"/><text x="515" y="664" text-anchor="middle" class="t">VÍDEO · TMS9918A</text><text x="515" y="694" text-anchor="middle" class="s">20h dados · 21h controle</text><text x="515" y="722" text-anchor="middle" class="s">VRAM dedicada · 16 KiB</text>
+<rect x="720" y="630" width="250" height="115" class="box" fill="#e8f0f9"/><text x="845" y="664" text-anchor="middle" class="t">SOM · SN76489AN</text><text x="845" y="694" text-anchor="middle" class="s">40h · escrita de comandos</text><text x="845" y="722" text-anchor="middle" class="s">clock 3,579545 MHz</text>
+<rect x="1050" y="630" width="250" height="115" class="box" fill="#e8f0f9"/><text x="1175" y="664" text-anchor="middle" class="t">GPIO · 82C55A</text><text x="1175" y="694" text-anchor="middle" class="s">60h–63h · interface PS2</text><text x="1175" y="722" text-anchor="middle" class="s">protocolo por software</text>
+<path d="M185 745V790 M1175 745V790" class="line" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+<path d="M515 745V790 M845 745V790" class="line" marker-end="url(#arrow)"/>
+<rect x="60" y="790" width="250" height="95" class="box" fill="#fafbfc"/><text x="185" y="824" text-anchor="middle" class="s">USB–serial TTL ↔ Mac</text><text x="185" y="854" text-anchor="middle" class="s">terminal e envio de programas</text>
+<rect x="390" y="790" width="250" height="95" class="box" fill="#fafbfc"/><text x="515" y="824" text-anchor="middle" class="s">vídeo composto → HDMI</text><text x="515" y="854" text-anchor="middle" class="s">tela já disponível</text>
+<rect x="720" y="790" width="250" height="95" class="box" fill="#fafbfc"/><text x="845" y="824" text-anchor="middle" class="s">saída de áudio → amplificação</text><text x="845" y="854" text-anchor="middle" class="s">efeitos sonoros</text>
+<rect x="1050" y="790" width="250" height="95" class="box" fill="#fafbfc"/><text x="1175" y="824" text-anchor="middle" class="s">adaptação de níveis ↔</text><text x="1175" y="854" text-anchor="middle" class="s">controle PlayStation 2</text>
+<rect x="60" y="920" width="1280" height="105" rx="12" fill="#f0f4f8"/>
+<text x="85" y="951" class="t">ALIMENTAÇÃO E IMPLEMENTAÇÃO</text>
+<text x="85" y="980" class="s">Núcleo a 5 V; controle com regulação e níveis adequados. GND comum. Desacoplamento por CI.</text>
+<text x="85" y="1007" class="s">Vídeo: referência 10,738635 MHz. Primeiro protoboard; depois PCB principal e módulos de expansão.</text>
+<text x="60" y="1055" class="n">Diagrama lógico da proposta, não esquema pino a pino. Setas indicam o fluxo de sinais; alimentação não representada por fios.</text>
+</svg>
