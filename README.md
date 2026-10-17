@@ -8,6 +8,8 @@ Prioridade definida em 17/10/2026: primeiro concluir o mínimo entregável com Z
 
 ## Documentação
 
+Compras informadas em 17/10/2026: 1 processador Z80, 1 RAM principal e 2 protoboards de 830 pontos. Modelos discutidos e pendências de inspeção estão registrados no HTML. Compra não significa recebimento nem teste concluído.
+
 - [Campo 4: arquitetura definida e guia de estudo](docs/campo-4-arquitetura.html): resposta, mapas, decodificação, exemplos e perguntas de defesa.
 - [Diagrama oficial da proposta, versão 1.0](docs/diagrama-oficial.svg).
 - [Diagrama de blocos e guia de estudo do campo 4](docs/arquitetura-para-estudo.html): abrir o arquivo em um navegador.
