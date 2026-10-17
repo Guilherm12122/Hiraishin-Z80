@@ -4,6 +4,8 @@ Computador de 8 bits de Guilherme de Oliveira Ribeiro, desenvolvido individualme
 
 Plataforma escolhida: Z80. Objetivo: bootloader e sistema operacional próprios, carregando um jogo autoral de plataforma com controle físico, cor e efeitos sonoros.
 
+Prioridade definida em 17/10/2026: primeiro concluir o mínimo entregável com Z80, ROM, RAM e terminal serial — boot próprio, SO com comandos e carga/execução de programa interativo. Protoboard, PCB e entregas acadêmicas continuam no escopo. Vídeo, HDMI, som, controle PS2 e jogo gráfico são expansões posteriores, sem bloquear essa primeira entrega. Os critérios de aceite estão no HTML do campo 4.
+
 ## Documentação
 
 - [Campo 4: arquitetura definida e guia de estudo](docs/campo-4-arquitetura.html): resposta, mapas, decodificação, exemplos e perguntas de defesa.
