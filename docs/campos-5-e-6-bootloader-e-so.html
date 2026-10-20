@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hiraishin-Z80 — Entendendo o bootloader e o sistema operacional</title>
+<style>
+:root{--ink:#18344e;--muted:#52687a;--line:#d6e1ea;--blue:#126c9b}*{box-sizing:border-box}body{margin:0;color:var(--ink);background:#eef3f7;font:17px/1.7 system-ui,-apple-system,sans-serif}main{max-width:1100px;margin:auto;padding:28px 22px 70px}header{background:#18344e;color:white;padding:32px;border-radius:14px}h1,h2,h3{line-height:1.3}h1{font-size:34px}h2{font-size:26px;margin-top:0}h3{font-size:21px}section{padding:28px;background:white;border:1px solid var(--line);border-radius:12px;margin-top:22px}a{color:var(--blue)}nav{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0}nav a{background:white;border:1px solid var(--line);padding:6px 12px;border-radius:8px;text-decoration:none}.note{padding:16px 20px;background:#edf7fd;border-left:4px solid var(--blue);margin:18px 0}.warning{background:#fff5df;border-color:#b77d17}.scroll{overflow:auto}table{border-collapse:collapse;width:100%;font-size:15px}th,td{padding:12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}th{background:#edf3f8}pre{background:#f0f4f8;border-radius:8px;padding:18px;overflow:auto;font:14px/1.8 ui-monospace,Menlo,monospace;white-space:pre-wrap}.flow{display:flex;gap:10px;flex-wrap:wrap}.step{flex:1;min-width:150px;padding:16px;background:#edf4fa;border:1px solid var(--line);border-radius:9px}.step b{display:block}li{margin:9px 0}.small{font-size:14px;color:var(--muted)}details{border:1px solid var(--line);border-radius:8px;padding:14px 18px;margin:12px 0}summary{cursor:pointer;font-weight:650}button{font:inherit;padding:8px 14px;color:white;background:var(--blue);border:0;border-radius:7px}code{font-family:ui-monospace,Menlo,monospace;font-size:.9em}@media(max-width:650px){main{padding:14px}section,header{padding:20px}h1{font-size:28px}}@media print{@page{size:A4;margin:15mm}body{font-size:10pt;background:white}main{padding:0}header{color:var(--ink);background:white;padding:0}nav,button{display:none}section{border:0;border-top:1px solid #ccc;padding:18px 0}h1{font-size:23pt}h2{font-size:17pt}table{font-size:9pt}tr,.note,.step{break-inside:avoid}details{break-inside:avoid}details::details-content{content-visibility:visible}pre{font-size:9pt}}
+</style>
+</head>
+<body><main>
+<header><p>Projeto Garagem · material de estudo · campos 5 e 6</p><h1>Do reset ao nosso programa</h1><p>Bootloader e sistema operacional do Hiraishin-Z80</p><p>Guilherme de Oliveira Ribeiro · Trabalho individual</p></header>
+<nav><a href="#visao">Visão geral</a><a href="#memoria">Nosso mapa</a><a href="#boot">Campo 5: boot</a><a href="#so">Campo 6: SO</a><a href="#carga">Carregar programas</a><a href="#servicos">Serviços e pilha</a><a href="#desenvolvimento">Como desenvolver</a><a href="#respostas">Respostas sugeridas</a><a href="#perguntas">Revisão</a></nav>
+<button onclick="window.print()">Imprimir / salvar em PDF</button>
+<div class="note warning"><strong>Escopo:</strong> primeiro o mínimo entregável, com terminal serial em um computador de apoio com Linux. Este documento explica o comportamento que vamos implementar; não afirma que o firmware, o SO ou a emulação já estão prontos. Os textos para a proposta são sugestões para sua revisão, não respostas já aprovadas por você.</div>
+
+<section id="visao"><h2>1. Três programas, três responsabilidades</h2>
+<p>Bootloader, sistema operacional e jogo são <strong>software</strong>: sequências de instruções que a mesma CPU Z80 executa em momentos diferentes. Não são três chips adicionais.</p>
+<div class="flow"><div class="step"><b>1. Bootloader</b>Começa após o reset, prepara o necessário e carrega o SO.</div><div class="step"><b>2. Sistema operacional</b>Atende comandos e carrega/inicia a aplicação.</div><div class="step"><b>3. Aplicação</b>Faz a atividade do usuário: por exemplo, o Hiraishin Runner.</div></div>
+<pre>RESET → boot na EEPROM → SO na RAM → comando → programa na RAM
+             Z80 executa todos esses códigos, um de cada vez</pre>
+<div class="scroll"><table><thead><tr><th>Nome</th><th>Uma explicação simples</th><th>Não confundir com</th></tr></thead><tbody>
+<tr><td>Bootloader</td><td>O programa que prepara a partida e coloca o SO em execução.</td><td>O circuito de reset, que apenas coloca a CPU no estado inicial.</td></tr>
+<tr><td>SO mínimo</td><td>Nosso programa de controle: comandos, entrada/saída e carregamento de aplicações.</td><td>Um Linux completo, com interface gráfica, arquivos e vários processos.</td></tr>
+<tr><td>Aplicação</td><td>O programa que será carregado e usado depois: jogo ou outro programa interativo.</td><td>O SO em si. Precisamos demonstrar que o SO carrega e inicia um programa.</td></tr>
+</tbody></table></div>
+<p><strong>O professor quer acompanhar essa separação:</strong> ligar → iniciar do endereço de reset → carregar o sistema → executar um comando → carregar e executar uma aplicação. Mostrar só uma mensagem fixa na ROM não demonstra tudo isso.</p></section>
+
+<section id="memoria"><h2>2. Onde cada coisa fica no nosso computador</h2><p>Usaremos exatamente o mapa já documentado no <a href="campo-4-arquitetura.html#memoria">campo 4</a>. Não há uma nova distribuição de endereços neste guia.</p>
+<div class="scroll"><table><thead><tr><th>Endereços</th><th>Memória</th><th>Conteúdo planejado</th></tr></thead><tbody>
+<tr><td>0000h–3FFFh</td><td>EEPROM · 16 KiB</td><td>Bootloader, vetores e diagnósticos.</td></tr>
+<tr><td>4000h–7FFFh</td><td>Mesma EEPROM · 16 KiB</td><td>Imagem inicial do SO.</td></tr>
+<tr><td>8000h–BFFFh</td><td>RAM · 16 KiB</td><td>SO em execução, seus dados e buffers.</td></tr>
+<tr><td>C000h–EFFFh</td><td>Mesma RAM · 12 KiB</td><td>Aplicação carregada e seus dados.</td></tr>
+<tr><td>F000h–FFFFh</td><td>Mesma RAM · 4 KiB</td><td>Pilha e área auxiliar; SP inicial previsto em FFFEh.</td></tr>
+</tbody></table></div>
+<h3>O que é a “imagem do SO”?</h3><p>É a representação binária do sistema: os bytes que armazenamos na EEPROM para depois copiar para a RAM. Não é uma imagem visual e não precisa ser um arquivo de disco ou uma imagem de Linux.</p>
+<pre>Antes da cópia:
+EEPROM 4000h–7FFFh → bytes guardados da imagem do SO
+RAM    8000h–BFFFh → conteúdo ainda não inicializado pelo nosso código
+
+Depois da cópia:
+EEPROM 4000h–7FFFh → continua com a mesma imagem
+RAM    8000h–BFFFh → recebeu uma cópia desses bytes
+
+Depois do salto para 8000h:
+Z80 passa a buscar instruções do SO na RAM.</pre>
+<p>Copiar não apaga a EEPROM. Ao desligar, a imagem continua lá; o conteúdo da RAM deixa de ser garantido. Ao ligar novamente, o boot repete a inicialização.</p>
+<div class="note"><strong>Um detalhe importante de construção:</strong> o SO deve ser montado para executar a partir de 8000h, embora sua imagem seja armazenada a partir de 4000h na EEPROM. O código precisa usar os endereços de execução corretos. “Montar”, aqui, significa converter Assembly em bytes com um montador.</div>
+<p>A versão inicial pode copiar uma região fixa de 16 KiB, preenchida na construção da imagem. Isso inclui espaço para dados iniciais; áreas que precisem começar zeradas devem ser preparadas pela imagem ou pela inicialização. Não presumiremos que a RAM liga zerada.</p></section>
+
+<section id="boot"><h2>3. Campo 5 — o bootloader, passo a passo</h2>
+<h3>Quem coloca o bootloader na EEPROM?</h3><p>Nós, durante o desenvolvimento, usando um gravador compatível. O computador precisa de código válido na EEPROM antes da primeira partida. O Z80 não cria o bootloader sozinho e o terminal não precisa enviar o SO a cada reset na estratégia escolhida.</p>
+<h3>O que acontece ao ligar?</h3><ol>
+<li><strong>O hardware estabiliza:</strong> alimentação, clock e reset devem funcionar corretamente. Código não corrige uma alimentação errada.</li>
+<li><strong>A CPU sai do reset:</strong> no Z80, a execução começa em 0000h. Nosso circuito mapeia a EEPROM nesse endereço.</li>
+<li><strong>Começa o boot:</strong> a posição 0000h conterá o início do código, normalmente um salto para a rotina principal do boot, deixando espaço para organizar os vetores.</li>
+<li><strong>Prepara a pilha:</strong> configura SP para uma região válida da RAM, antes de usar chamadas de subrotina ou operações que dependam da pilha.</li>
+<li><strong>Inicializa a UART:</strong> configura os registros da PC16550D para a comunicação planejada. O alvo inicial é 9.600 baud, 8 bits, sem paridade e um bit de parada.</li>
+<li><strong>Informa a partida:</strong> envia uma mensagem pela serial para indicar que o código inicial está executando.</li>
+<li><strong>Carrega o SO:</strong> copia a imagem da EEPROM, iniciando em 4000h, para a RAM, iniciando em 8000h. Podemos acrescentar verificação da cópia antes de prosseguir.</li>
+<li><strong>Transfere o controle:</strong> executa um salto para a entrada do SO em 8000h.</li>
+</ol>
+<div class="note"><strong>“Transferir o controle” não significa mover uma unidade de controle.</strong> Significa mudar o endereço de onde a CPU busca as próximas instruções. O PC passa a apontar para a entrada do sistema.</div>
+<h3>Quando o boot termina?</h3><p>Quando o SO assume a execução. O boot permanece guardado na EEPROM, mas não fica rodando em paralelo ao sistema. Na versão inicial, usaremos consulta de status por software, sem habilitar interrupções até que os respectivos vetores e rotinas estejam implementados.</p>
+<h3>O que aprender nesta parte</h3><ul><li>Por que o código inicial precisa estar em memória não volátil e em um endereço acessível após reset.</li><li>Diferença entre armazenar, copiar e executar código.</li><li>O que significam PC, SP, inicialização e salto.</li><li>Por que uma mensagem serial ajuda a identificar até onde a partida chegou.</li></ul></section>
+
+<section id="so"><h2>4. Campo 6 — o nosso sistema operacional mínimo</h2>
+<p>Depois que recebe o controle, o SO prepara seu estado e mostra um <strong>prompt</strong>: um texto indicando que está esperando um comando. Exemplo ilustrativo:</p>
+<pre>Hiraishin-Z80
+Sistema pronto.
+HIRA&gt;</pre>
+<p>Essas mensagens são exemplos de interface, não saídas de software já funcionando.</p>
+<h3>Responsabilidades da primeira versão</h3><ul>
+<li><strong>Entrada:</strong> ler caracteres recebidos pela UART.</li>
+<li><strong>Saída:</strong> enviar caracteres e mensagens pela UART.</li>
+<li><strong>Comandos:</strong> receber uma linha, reconhecer o pedido e executar a ação.</li>
+<li><strong>Carregamento:</strong> receber um programa e armazená-lo na área de aplicação.</li>
+<li><strong>Execução:</strong> iniciar o programa carregado, com um caminho definido para retornar ao SO.</li>
+<li><strong>Serviços:</strong> oferecer rotinas que a aplicação possa chamar para entrada e saída, sem reimplementar toda a comunicação.</li>
+</ul>
+<div class="scroll"><table><thead><tr><th>Comando sugerido</th><th>Comportamento</th><th>O que demonstra</th></tr></thead><tbody>
+<tr><td>HELP</td><td>Lista os comandos disponíveis.</td><td>Leitura, interpretação e resposta.</td></tr>
+<tr><td>LOAD</td><td>Recebe um binário pela serial e valida a carga na RAM.</td><td>Carregamento de programa pelo nosso código.</td></tr>
+<tr><td>RUN</td><td>Inicia a aplicação válida em C000h.</td><td>Execução de um programa separado do SO.</td></tr>
+</tbody></table></div>
+<p>Os nomes são uma sugestão de interface; os comandos ainda serão implementados e testados. LOAD deve deixar a aplicação marcada como inválida até o recebimento e a verificação terminarem; RUN não deve executar uma carga incompleta.</p>
+<h3>O que não precisamos fazer inicialmente</h3><p>Não precisamos de interface gráfica, disco, sistema de arquivos, instalação de pacotes, usuários, rede, memória virtual ou multitarefa. Nosso sistema pode ser um monitor de comandos com carregador e serviços simples, desenvolvido por nós para esta máquina.</p>
+<p><strong>Um programa por vez:</strong> quando a aplicação está em execução, o SO não fica necessariamente processando comandos em paralelo. Seu código continua na RAM e pode ser chamado por serviços; o prompt volta quando a aplicação devolve o controle.</p>
+<h3>O que aprender nesta parte</h3><ul><li>Diferença entre SO e aplicação.</li><li>Como caracteres viram uma linha de comando.</li><li>Por que o SO precisa conhecer o mapa de memória e a interface da UART.</li><li>O que significa carregar um programa separado, em vez de apenas colocar tudo em um único código fixo na ROM.</li></ul></section>
+
+<section id="carga"><h2>5. Como um programa sai do Linux e chega ao Z80</h2>
+<pre>Arquivo binário no computador Linux
+                ↓ ferramenta de envio
+USB–serial TTL → UART PC16550D → Z80 executando o comando LOAD
+                                       ↓
+                              RAM C000h–EFFFh
+                                       ↓ RUN
+                              execução em C000h</pre>
+<p>O Linux é a máquina de desenvolvimento e o terminal. O programa precisa ser gerado para <strong>Z80</strong>: um executável nativo de Linux/Ryzen não funciona nessa CPU.</p>
+<h3>Enviar bytes não é o mesmo que executar</h3><ol><li>O SO consulta a UART e recebe um byte.</li><li>O Z80 escreve esse byte no endereço de destino da RAM.</li><li>Repete até receber o programa completo, usando um protocolo de transferência.</li><li>Verifica tamanho, destino e integridade.</li><li>Somente depois, RUN inicia a execução no endereço de entrada.</li></ol>
+<p>O adaptador USB–serial e a UART não sabem, por si, onde começa o programa na RAM. Quem faz essa decisão e as escritas é nosso carregador, executado pelo Z80.</p>
+<h3>Regras do carregador</h3><ul><li>Na versão inicial, manter o destino na área de aplicação, começando em C000h.</li><li>Rejeitar tamanho zero, tamanho maior que 12 KiB ou qualquer transferência que ultrapasse EFFFh. A verificação deve tratar também estouro aritmético.</li><li>Não permitir que a carga sobrescreva o SO nem a área reservada à pilha.</li><li>Definir início, comprimento e verificação de integridade no protocolo; tratar erro, cancelamento e recebimento incompleto.</li><li>Controlar o ritmo da transmissão para evitar perda de dados na UART. A simples existência de um checksum não impede perda de bytes.</li></ul>
+<div class="note warning"><strong>Ainda será especificado:</strong> formato exato do cabeçalho, algoritmo de verificação, controle de fluxo e ferramenta de envio. Vamos defini-los antes de implementar os dois lados. Um checksum detecta certos erros de transmissão; não é garantia de que o programa está correto ou é seguro.</div>
+<p><strong>Sem armazenamento adicional:</strong> o programa carregado na RAM precisa ser reenviado após desligar ou reiniciar o sistema. O SO, por outro lado, pode ser recarregado automaticamente da imagem na EEPROM.</p></section>
+
+<section id="servicos"><h2>6. Pilha, subrotinas e serviços do SO</h2>
+<h3>Para que serve a pilha?</h3><p>É uma área da RAM usada para guardar temporariamente informações, como o endereço para onde voltar após uma chamada. O registrador <strong>SP</strong> indica a posição corrente da pilha.</p>
+<p>No Z80, uma chamada CALL guarda o endereço de retorno na pilha; RET o recupera. A pilha cresce para endereços menores. Nosso plano começa com SP em FFFEh, dentro da área reservada. Precisaremos dimensionar o uso para que ela não invada a aplicação.</p>
+<h3>Como o programa pode voltar ao SO?</h3><p>Uma estratégia simples será o SO chamar a entrada da aplicação em C000h usando CALL. Se a aplicação preservar o estado necessário da pilha, poderá retornar usando RET. O SO então reapresenta o prompt. A convenção exata de registradores e retorno ainda será definida.</p>
+<h3>O que é uma chamada de serviço?</h3><p>É uma forma combinada de a aplicação pedir uma tarefa ao SO. Por exemplo:</p>
+<pre>Aplicação: “envie este caractere”
+    ↓ chama a rotina de saída do SO
+SO: consulta o estado da UART e envia o caractere
+    ↓ retorna
+Aplicação continua</pre>
+<p>Podemos começar com serviços para enviar um caractere, ler um caractere e verificar se há entrada disponível. Essa última operação será importante para o runner: esperar bloqueado por uma tecla a cada passo pararia a animação.</p>
+<p>Esses serviços podem ser subrotinas acessíveis por uma tabela de entrada estável. Não precisam envolver interrupção nem troca de privilégio. Antes de programar a aplicação, definiremos a convenção: como passar argumentos, onde receber resultados e quais registradores são preservados. Não atribuiremos endereços arbitrários aqui.</p>
+<div class="note"><strong>Limite do sistema mínimo:</strong> não haverá proteção de memória impedindo uma aplicação defeituosa de sobrescrever o SO. A validação do carregador reduz erros de carga; não cria isolamento durante a execução.</div></section>
+
+<section id="desenvolvimento"><h2>7. Como vamos construir e testar por etapas</h2>
+<p><strong>Recomendação inicial:</strong> bootloader e primeira versão do SO em Assembly Z80, para controlar claramente endereços, inicialização e acessos de E/S. Isso é uma sugestão para os campos 5 e 6, a confirmar com você; não é uma decisão anterior já aprovada. C pode ser avaliado posteriormente, respeitando o mesmo mapa e a convenção de chamadas.</p>
+<ol><li><strong>Primeira saída:</strong> gerar uma pequena ROM que começa em 0000h e escreve uma mensagem pela UART. É um teste intermediário, não o bootloader completo.</li><li><strong>RAM:</strong> escrever e ler padrões conhecidos em endereços de teste sem destruir código ou pilha.</li><li><strong>Cópia e salto:</strong> colocar uma rotina na imagem em EEPROM, copiar para 8000h e provar que a mensagem seguinte veio de código executado na RAM.</li><li><strong>SO:</strong> implementar entrada de caracteres, linha de comando, HELP e prompt.</li><li><strong>Carga:</strong> implementar LOAD, validações e RUN. Primeiro executar um programa pequeno que imprime uma mensagem e retorna.</li><li><strong>Interação:</strong> executar uma aplicação separada que lê uma entrada e produz uma resposta.</li><li><strong>Runner:</strong> adicionar entrada não bloqueante, atualização de tela e temporização; medir os limites do terminal serial.</li></ol>
+<h3>O que cada ambiente pode provar</h3><div class="scroll"><table><thead><tr><th>Ambiente</th><th>Uso</th><th>Limite</th></tr></thead><tbody>
+<tr><td>Logisim</td><td>Conferir a lógica dos acessos e a seleção dos chips.</td><td>Não teremos nele um Z80 completo pronto executando todo esse software.</td></tr>
+<tr><td>Z80Ex + modelo da máquina</td><td>Executar instruções com nosso mapa e um modelo da UART.</td><td>A camada de memória e UART ainda precisa ser implementada; não comprova eletricidade real.</td></tr>
+<tr><td>Protoboard / PCB</td><td>Executar as imagens reais e testar comunicação, partida e integração.</td><td>Exige alimentação, clock, reset, níveis e temporização corretos.</td></tr>
+</tbody></table></div>
+<p>Devemos testar também os erros: carga incompleta, tamanho inválido, checksum incorreto, RUN sem aplicação válida, reinicialização e retorno ao prompt. Guardaremos os binários usados, logs e evidências no processo de versionamento.</p></section>
+
+<section id="respostas"><h2>8. Sugestões de resposta para a proposta</h2>
+<div class="note warning">Use estes textos depois de entender o caminho descrito. Assembly e a convenção de serviços ainda precisam de sua confirmação. O protocolo de carga e o firmware serão desenvolvidos e testados, não apresentados como já prontos.</div>
+<h3>Campo 5 — Bootloader</h3><p>O bootloader será próprio, inicialmente escrito em Assembly Z80 e gravado na EEPROM AT28C256, com entrada no endereço de reset 0000h. Ele inicializará a pilha e a comunicação serial pela UART PC16550D, copiará a imagem do sistema operacional da faixa 4000h–7FFFh da EEPROM para 8000h–BFFFh da RAM e transferirá a execução para 8000h. O código inicial permanecerá disponível na EEPROM para repetir a partida após cada reset.</p>
+<h3>Campo 6 — Sistema operacional</h3><p>O sistema operacional será próprio e minimalista, inicialmente escrito em Assembly Z80 e executado na RAM. Oferecerá um terminal de comandos pela serial, com ajuda, carregamento e execução de programas. O carregador receberá binários do computador de apoio com Linux, verificará tamanho, faixa de destino e integridade e os armazenará na área C000h–EFFFh. O sistema também oferecerá rotinas de entrada e saída para as aplicações e um mecanismo definido de retorno ao prompt. A primeira versão executará uma aplicação por vez, sem sistema de arquivos ou multitarefa.</p></section>
+
+<section id="perguntas"><h2>9. Perguntas para conferir seu entendimento</h2><p>Tente responder antes de abrir a explicação. Não precisa decorar frases: procure explicar o caminho dos dados e das instruções.</p>
+<details><summary>1. O bootloader é um chip?</summary><p>Não. É código armazenado na EEPROM e executado pela CPU Z80.</p></details>
+<details><summary>2. Como o Z80 encontra o primeiro código?</summary><p>Após reset válido, começa em 0000h. Nosso mapa coloca a EEPROM nessa faixa, com instruções válidas de partida.</p></details>
+<details><summary>3. O reset carrega o SO?</summary><p>Não. O reset inicia o estado da CPU. Depois disso, as instruções do bootloader fazem a cópia e o salto.</p></details>
+<details><summary>4. O que muda ao copiar o SO de 4000h para 8000h?</summary><p>Os bytes da imagem passam a existir também na RAM. Só depois do salto a CPU começa a executar o sistema nesse destino; a EEPROM não é apagada.</p></details>
+<details><summary>5. O bootloader e o SO recebem o jogo pela serial?</summary><p>Na estratégia inicial, o boot carrega o SO da EEPROM. O carregador do SO recebe a aplicação pela serial. São duas cargas diferentes.</p></details>
+<details><summary>6. Onde estão o SO guardado e o SO executando?</summary><p>A imagem fica em 4000h–7FFFh na EEPROM. A região de execução, dados e buffers fica em 8000h–BFFFh na RAM.</p></details>
+<details><summary>7. Por que a aplicação não deve ser carregada em 8000h?</summary><p>Porque sobrescreveria a área do SO. Reservamos C000h–EFFFh para a aplicação.</p></details>
+<details><summary>8. Quem recebe o byte serial e grava na RAM?</summary><p>A UART recebe os sinais seriais. O Z80, executando o nosso carregador, lê os registros da UART e escreve os bytes nos endereços de RAM previstos.</p></details>
+<details><summary>9. Quem executa a aplicação: Linux ou Z80?</summary><p>No protótipo físico, o Z80. Linux prepara os arquivos, envia os dados e mostra o terminal. Durante a emulação, o Z80 virtual roda dentro do computador de apoio.</p></details>
+<details><summary>10. Por que configurar SP antes de usar CALL?</summary><p>Porque CALL precisa guardar o endereço de retorno na pilha. Um SP não preparado pode causar escrita em uma região indevida e impedir o retorno correto.</p></details>
+<details><summary>11. Mostrar um prompt já cumpre tudo?</summary><p>Não. Precisamos demonstrar comandos e, principalmente, que nosso código carrega e inicia um programa separado, com entrada e saída.</p></details>
+<details><summary>12. Como o jogo pede ao SO que imprima algo?</summary><p>Usando uma convenção de serviço definida por nós, por exemplo uma chamada a uma rotina de saída. Ela usa a UART e retorna à aplicação.</p></details>
+<details><summary>13. Após desligar, o programa carregado continua na RAM?</summary><p>Não há garantia de preservação. Nossa versão inicial precisará reenviar a aplicação; a imagem do SO permanece na EEPROM.</p></details>
+<details><summary>14. A CPU executa o SO e o jogo ao mesmo tempo?</summary><p>Não na primeira versão. Uma sequência de instruções é executada por vez. A aplicação pode chamar serviços do SO e depois retornar a ele.</p></details>
+<p><strong>Meta:</strong> conseguir explicar em voz alta reset → busca em ROM → inicialização → cópia → salto → prompt → LOAD → RUN → retorno, indicando em qual memória está o código em cada etapa.</p></section>
+
+<section id="referencias"><h2>10. Referências e próximos detalhes de implementação</h2><ul>
+<li><a href="campo-4-arquitetura.html">Arquitetura e mapas do Hiraishin-Z80</a>: endereços e estratégia local.</li>
+<li><a href="https://www.zilog.com/docs/z80/z80cpu_um.pdf">Zilog — Z80 CPU User Manual</a>: execução, instruções, reset e uso da pilha.</li>
+<li><a href="https://media.digikey.com/pdf/Data%20Sheets/Texas%20Instruments%20PDFs/PC16550D.pdf">Texas Instruments — PC16550D, cópia arquivada</a>: configuração e status da UART.</li>
+<li><a href="https://sourceforge.net/projects/z80ex/">Z80Ex</a>: biblioteca escolhida para a emulação da CPU.</li>
+</ul><p>As faixas, comandos sugeridos e sequência de carga são decisões de projeto, não características impostas pelo Z80. Ainda detalharemos o protocolo serial, o formato dos binários, a tabela de serviços, os registradores preservados e os procedimentos de erro. O guia não substitui esses contratos nem testes no hardware.</p>
+<div class="note"><strong>Uso de IA:</strong> material produzido com assistência de IA para revisão e estudo do autor. A exigência do professor é compreender e defender todo item incluído. Não afirmaremos testes, autoria exclusiva sem assistência ou funcionamento que ainda não foram demonstrados.</div></section>
+</main></body></html>
