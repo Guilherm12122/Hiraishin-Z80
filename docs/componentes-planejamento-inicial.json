@@ -1,0 +1,957 @@
+{
+  "date": "2026-10-20",
+  "spreadsheet_url": "https://docs.google.com/spreadsheets/d/18HAv2fX90gUr8blsECXT2otFXQS_czm7yxga7eUtVMo/edit?usp=drivesdk",
+  "tabs": [
+    {
+      "name": "Orientacoes",
+      "rows": [
+        [
+          "Tópico",
+          "Orientação"
+        ],
+        [
+          "Objetivo",
+          "Mínimo obrigatório primeiro: Z80 funcional, boot e SO próprios, aplicação interativa serial, protoboard, PCB e entregas acadêmicas. Diferenciais somente se houver tempo."
+        ],
+        [
+          "Estado da lista",
+          "Lista de planejamento e aquisição; NÃO é BOM elétrica final liberada para compra. O esquema do núcleo ainda não está fechado."
+        ],
+        [
+          "Quantidades",
+          "Números são previsão funcional ou estoque indicado na observação. 'A definir' significa não comprar por aproximação. Alternativas com OU não se somam."
+        ],
+        [
+          "Compras confirmadas",
+          "Somente 1 Z80, 1 SRAM principal e 2 protoboards foram informados como comprados. Recebimento e testes não confirmados. Tela HDMI informada como já disponível."
+        ],
+        [
+          "Demais compras",
+          "'Não informado' não significa que o item está ausente: verificar antes de encomendar. Modelos de CPU/RAM discutidos precisam ser conferidos na peça recebida."
+        ],
+        [
+          "Abas",
+          "Minimo: núcleo serial; Diferenciais: vídeo/som/gamepad; Bancada: ferramentas e software; PCB: fabricação e montagem. Não confundir ferramentas com CIs da máquina."
+        ],
+        [
+          "Gates de compra",
+          "Fechar driver de clock NMOS, reset, lógica HCT, referências de clock e níveis da serial; conferir encapsulamentos e suporte do gravador. Somente depois liberar BOM."
+        ],
+        [
+          "Reaproveitamento",
+          "Não duplicar automaticamente CIs para protoboard e PCB. Confirmar regra de demonstração com o professor; soquetes e conectores podem precisar de unidades próprias."
+        ],
+        [
+          "Diferenciais",
+          "Não condicionar o mínimo ao TMS9918A, VRAM, SN76489AN, 82C55A ou gamepad. O Runner é software opcional, sem CI exclusivo."
+        ],
+        [
+          "Memória",
+          "EEPROM 0000h–7FFFh (boot e imagem do SO); SRAM 8000h–FFFFh. Boot copia imagem de 4000h para 8000h. Aplicação pela serial em C000h."
+        ],
+        [
+          "Terminal",
+          "O Linux fornece teclado/tela e envia programas. O Z80 executa boot, SO e aplicação. Após desligar, a aplicação em RAM precisa ser reenviada."
+        ],
+        [
+          "Segurança",
+          "5 V no núcleo, fonte externa regulada, sem rede exposta, verificar polaridade e curto. Controle PS2 e adaptadores exigem níveis específicos. Desacoplamento por CI."
+        ],
+        [
+          "Custos e fornecedores",
+          "Sem cotações nesta versão; referências são técnicas, não anúncios nem confirmação de estoque. Valores e prazos precisam ser pesquisados antes da compra."
+        ],
+        [
+          "Risco do vídeo",
+          "TMS9918A usa interface de VRAM própria; SRAM demanda adaptação projetada. Não comprar memórias DRAM antigas por equivalência aparente de capacidade."
+        ],
+        [
+          "Verificação",
+          "Conferência lógica da lista, não circuito validado. Datasheets e pinagem real prevalecem sobre títulos de anúncios e esta planilha."
+        ],
+        [
+          "Registro",
+          "Versão inicial criada em 20/10/2026 a partir das decisões e compras informadas na conversa."
+        ]
+      ]
+    },
+    {
+      "name": "Minimo",
+      "rows": [
+        [
+          "ID",
+          "Bloco",
+          "Item",
+          "Modelo / especificação",
+          "Qtd. prevista",
+          "Unidade",
+          "Qtd. comprada",
+          "Compra",
+          "Definição",
+          "Função / observações",
+          "Referência técnica"
+        ],
+        [
+          "M01",
+          "CPU",
+          "Processador",
+          "Z0840006PSC, DIP-40, NMOS",
+          "1",
+          "un.",
+          "1",
+          "Comprado",
+          "Modelo definido",
+          "Executa boot, SO e aplicação. Compra informada; recebimento, marcação e testes ainda não confirmados.",
+          "https://www.zilog.com/docs/z80/z80cpu_um.pdf"
+        ],
+        [
+          "M02",
+          "Memória",
+          "SRAM principal",
+          "KM62256DLP-7, 32 KiB, DIP-28",
+          "1",
+          "un.",
+          "1",
+          "Comprado",
+          "Modelo definido",
+          "RAM de 8000h a FFFFh. Conferir DLP (DIP), não DLG (SOP). Compra informada; testes pendentes.",
+          "https://www.knjn.com/datasheets/KM62256D.pdf"
+        ],
+        [
+          "M03",
+          "Montagem",
+          "Protoboard",
+          "830 pontos",
+          "2",
+          "un.",
+          "2",
+          "Comprado",
+          "Modelo definido",
+          "Duas compradas; conferir continuidade dos trilhos e qualidade dos contatos. Expansões podem exigir mais espaço.",
+          ""
+        ],
+        [
+          "M04",
+          "Memória",
+          "EEPROM paralela",
+          "AT28C256, 32 KiB, 5 V, DIP-28",
+          "1",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "Modelo definido",
+          "Boot e imagem do SO, 0000h–7FFFh. Conferir sufixo, tempo de acesso e suporte do gravador antes da compra.",
+          "https://www.microchip.com/en-us/product/at28c256"
+        ],
+        [
+          "M05",
+          "Serial",
+          "UART",
+          "PC16550D, encapsulamento DIP-40",
+          "1",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "Modelo definido",
+          "Portas 00h–07h canônicas; terminal e recebimento de binários. Não comprar PLCC/SMD sem adaptação.",
+          "https://media.digikey.com/pdf/Data%20Sheets/Texas%20Instruments%20PDFs/PC16550D.pdf"
+        ],
+        [
+          "M06",
+          "Serial",
+          "Adaptador USB–serial TTL",
+          "TX/RX com níveis compatíveis; driver para Linux",
+          "1",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Não é conversor RS-232. Verificar níveis dos sinais, não apenas a indicação 3,3/5 V da alimentação. GND comum; evitar realimentar o circuito pelo USB.",
+          ""
+        ],
+        [
+          "M07",
+          "Serial",
+          "Cabo USB do adaptador",
+          "Conector conforme adaptador e PC",
+          "1",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Usar cabo de dados, não somente carga; reaproveitar se disponível.",
+          ""
+        ],
+        [
+          "M08",
+          "Clock CPU",
+          "Módulo oscilador ativo",
+          "1 MHz, 5 V, saída e encapsulamento a conferir",
+          "1",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Não é cristal passivo. Validar duty cycle, níveis e bordas com o Z80 NMOS.",
+          ""
+        ],
+        [
+          "M09",
+          "Clock CPU",
+          "Driver / condicionamento do clock",
+          "Circuito a selecionar",
+          "A definir",
+          "conjunto",
+          "Não informado",
+          "Não informado",
+          "A definir",
+          "Garantir requisitos da entrada de clock NMOS. Modelo e quantidade dependem do esquema; não liberar compra por aproximação.",
+          ""
+        ],
+        [
+          "M10",
+          "Clock serial",
+          "Referência de clock da UART",
+          "1,8432 MHz",
+          "A definir",
+          "conjunto",
+          "Não informado",
+          "Não informado",
+          "A definir",
+          "Escolher entre oscilador ativo e circuito com cristal/capacitores da UART. São alternativas, não comprar ambos sem projeto.",
+          "https://media.digikey.com/pdf/Data%20Sheets/Texas%20Instruments%20PDFs/PC16550D.pdf"
+        ],
+        [
+          "M11",
+          "Decodificação",
+          "Decodificador de E/S",
+          "74HCT138, DIP-16",
+          "1",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "Modelo definido",
+          "A7–A5 selecionam janelas; habilitação qualificada por sinais de controle.",
+          "https://www.ti.com/lit/ds/symlink/sn74hct138.pdf"
+        ],
+        [
+          "M12",
+          "Decodificação",
+          "Portas lógicas auxiliares",
+          "74HCT04 / 74HCT32 / 74HCT00, conforme esquema",
+          "A definir",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "A definir",
+          "Inversões, seleção ROM/RAM e qualificação de leitura/escrita, refresh e reconhecimento de interrupção. Não significa usar obrigatoriamente todos esses modelos.",
+          ""
+        ],
+        [
+          "M13",
+          "Reset",
+          "Circuito de reset de partida",
+          "Supervisor ou circuito temporizado validado",
+          "A definir",
+          "conjunto",
+          "Não informado",
+          "Não informado",
+          "A definir",
+          "Reset ao energizar e sinal estável; adaptar polaridades de Z80 e UART. Modelo e temporização ainda não fechados.",
+          ""
+        ],
+        [
+          "M14",
+          "Reset",
+          "Botão de reset",
+          "Pulsador normalmente aberto para protoboard",
+          "1",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Integra o circuito de reset; sozinho não substitui a temporização e o condicionamento.",
+          ""
+        ],
+        [
+          "M15",
+          "Alimentação",
+          "Fonte externa regulada",
+          "5 V; alvo de capacidade 2 A, a dimensionar",
+          "1",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Saída de baixa tensão, polaridade e qualidade verificadas. 2 A é capacidade proposta, não consumo medido. Sem rede elétrica exposta no circuito.",
+          ""
+        ],
+        [
+          "M16",
+          "Alimentação",
+          "Entrada e distribuição de energia",
+          "Adaptador/conector para protoboard e fios adequados",
+          "1",
+          "conjunto",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Conector compatível com a fonte, GND comum e distribuição curta. Módulo regulador de protoboard não substitui a fonte externa.",
+          ""
+        ],
+        [
+          "M17",
+          "Alimentação",
+          "Desacoplamento cerâmico",
+          "100 nF por CI; lote inicial sugerido",
+          "20",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "20 é estoque de montagem, não contagem final. Colocar junto a cada alimentação de CI.",
+          ""
+        ],
+        [
+          "M18",
+          "Alimentação",
+          "Filtragem da alimentação",
+          "Capacitores de reservatório, valores a dimensionar",
+          "A definir",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "A definir",
+          "Conferir tensão nominal e polaridade; quantidade/valores dependem da distribuição.",
+          ""
+        ],
+        [
+          "M19",
+          "Polarização",
+          "Resistores",
+          "Pull-ups, pull-downs e reset conforme esquema",
+          "A definir",
+          "conjunto",
+          "Não informado",
+          "Não informado",
+          "A definir",
+          "Definir valores e quantidades para entradas não utilizadas, reset e demais redes. Não deixar entradas flutuantes.",
+          ""
+        ],
+        [
+          "M20",
+          "Fiação",
+          "Fio rígido para protoboard",
+          "Cobre sólido isolado, aproximadamente 22 AWG",
+          "1",
+          "rolo/kit",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Fiação curta e organizada para dados, endereços, controle e alimentação.",
+          ""
+        ],
+        [
+          "M21",
+          "Fiação",
+          "Jumpers macho–macho",
+          "Comprimentos variados",
+          "1",
+          "kit",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Complementar o fio rígido, sem assumir que um kit atende sozinho a todos os barramentos.",
+          ""
+        ],
+        [
+          "M22",
+          "Barramentos",
+          "Buffers, se exigidos pelo fan-out",
+          "Ex.: família HCT, modelo conforme direção e carga",
+          "A definir",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "Condicional",
+          "Somente se análise elétrica indicar necessidade. Não comprar 74HC/HCT indistintamente.",
+          ""
+        ],
+        [
+          "M23",
+          "Proteção",
+          "Proteção da alimentação",
+          "Fusível/rearme e polaridade, conforme projeto",
+          "A definir",
+          "conjunto",
+          "Não informado",
+          "Não informado",
+          "A definir",
+          "Implementação a dimensionar para evitar danos e limitar efeitos de curto; não componente de lógica de execução.",
+          ""
+        ]
+      ]
+    },
+    {
+      "name": "Diferenciais",
+      "rows": [
+        [
+          "ID",
+          "Bloco",
+          "Item",
+          "Modelo / especificação",
+          "Qtd. prevista",
+          "Unidade",
+          "Qtd. comprada",
+          "Compra",
+          "Definição",
+          "Função / observações",
+          "Referência técnica"
+        ],
+        [
+          "D01",
+          "Vídeo",
+          "Processador de vídeo",
+          "TMS9918A",
+          "1",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "Modelo definido",
+          "Expansão somente após o mínimo. Gerador de vídeo; não confundir com variantes de saída diferente.",
+          "https://computers.baffa.tec.br/pages/datasheet/TMS9918A_TMS9928A_TMS9929A_Video_Display_Processors_Data_Manual_Nov82.pdf"
+        ],
+        [
+          "D02",
+          "Vídeo",
+          "VRAM dedicada",
+          "SRAM com 16 KiB utilizados, modelo a validar",
+          "1",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Separada da RAM principal. Candidato 62256 de 32 KiB usando parte da capacidade; exige circuito adaptador, não conexão direta aos sinais de DRAM.",
+          "https://computers.baffa.tec.br/pages/datasheet/TMS9918A_TMS9928A_TMS9929A_Video_Display_Processors_Data_Manual_Nov82.pdf"
+        ],
+        [
+          "D03",
+          "Vídeo",
+          "Adaptação SRAM para o VDP",
+          "Latches, lógica e temporização a projetar",
+          "A definir",
+          "conjunto",
+          "Não informado",
+          "Não informado",
+          "A definir",
+          "Bloqueador para fechar BOM de vídeo; não comprar conjunto de portas por tentativa. DRAM antiga pode exigir tensões adicionais.",
+          ""
+        ],
+        [
+          "D04",
+          "Vídeo",
+          "Referência de clock do VDP",
+          "10,738635 MHz; circuito conforme datasheet",
+          "1",
+          "conjunto",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Cristal/circuito ou módulo compatível a selecionar, incluindo componentes auxiliares.",
+          "https://computers.baffa.tec.br/pages/datasheet/TMS9918A_TMS9928A_TMS9929A_Video_Display_Processors_Data_Manual_Nov82.pdf"
+        ],
+        [
+          "D05",
+          "Vídeo",
+          "Saída de vídeo composto",
+          "Condicionamento, resistores/capacitores e conector RCA",
+          "A definir",
+          "conjunto",
+          "Não informado",
+          "Não informado",
+          "A definir",
+          "Construir saída com níveis e terminação corretos para o conversor; não ligar pino diretamente ao HDMI.",
+          ""
+        ],
+        [
+          "D06",
+          "Vídeo",
+          "Conversor AV → HDMI",
+          "Entrada de vídeo composto NTSC e saída HDMI",
+          "1",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Confirmar direção, sinal de baixa resolução, compatibilidade e atraso; não confundir HDMI → AV.",
+          ""
+        ],
+        [
+          "D07",
+          "Vídeo",
+          "Cabo de vídeo composto",
+          "RCA compatível com circuito de saída",
+          "1",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Entre módulo de vídeo e conversor.",
+          ""
+        ],
+        [
+          "D08",
+          "Vídeo",
+          "Cabo HDMI",
+          "Compatível com tela e conversor",
+          "1",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Reaproveitar se disponível.",
+          ""
+        ],
+        [
+          "D09",
+          "Vídeo",
+          "Tela HDMI",
+          "Tela já informada pelo autor",
+          "1",
+          "un.",
+          "1",
+          "Já possui",
+          "Validar modelo",
+          "Já possui; não recomprar. Converter sinal corretamente. Marca/modelo exatos a conferir.",
+          ""
+        ],
+        [
+          "D10",
+          "Som",
+          "Gerador de som",
+          "SN76489AN",
+          "1",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "Modelo definido",
+          "Recebe comandos na porta 40h; sem alto-falante direto na saída.",
+          "https://ftp.whtech.com/datasheets%20and%20manuals/Datasheets%20-%20TI/SN76489.pdf"
+        ],
+        [
+          "D11",
+          "Som",
+          "Referência de clock do PSG",
+          "3,579545 MHz, circuito a selecionar",
+          "1",
+          "conjunto",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Não presumir que pode usar o clock da CPU sem alterar o resultado sonoro.",
+          "https://ftp.whtech.com/datasheets%20and%20manuals/Datasheets%20-%20TI/SN76489.pdf"
+        ],
+        [
+          "D12",
+          "Som",
+          "Lógica de espera / escrita",
+          "Interface temporizada de READY e /WAIT",
+          "A definir",
+          "conjunto",
+          "Não informado",
+          "Não informado",
+          "A definir",
+          "Validar início, duração e liberação do ciclo. Não basta ligar READY a /WAIT sem análise.",
+          "https://ftp.whtech.com/datasheets%20and%20manuals/Datasheets%20-%20TI/SN76489.pdf"
+        ],
+        [
+          "D13",
+          "Som",
+          "Condicionamento e conector de áudio",
+          "Acoplamento, nível de saída e conector",
+          "A definir",
+          "conjunto",
+          "Não informado",
+          "Não informado",
+          "A definir",
+          "Valores e saída definidos no esquema; evitar carga indevida no PSG.",
+          ""
+        ],
+        [
+          "D14",
+          "Som",
+          "Reprodução de áudio",
+          "Caixa ativa OU módulo amplificador + alto-falante",
+          "1",
+          "conjunto",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Alternativas: não duplicar compra. Especificações de impedância, ganho e alimentação a conferir.",
+          ""
+        ],
+        [
+          "D15",
+          "Controle",
+          "Interface paralela programável",
+          "82C55A, variante de 5 V em DIP-40",
+          "1",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "Modelo definido",
+          "Comunica gamepad via software; confirmar temporização e níveis da variante.",
+          "https://www.renesas.com/document/dst/82c55a-datasheet"
+        ],
+        [
+          "D16",
+          "Controle",
+          "Controle de videogame",
+          "PlayStation 2 com conector original",
+          "1",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Não é teclado PS/2. Protocolo e pinagem a validar no modelo comprado; vibração fora do escopo inicial.",
+          ""
+        ],
+        [
+          "D17",
+          "Controle",
+          "Conector/adaptador para gamepad",
+          "Soquete PS2 ou extensão para conexão",
+          "1",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Evitar cortar o controle; mapear fios pelo modelo real, sem confiar em cores genéricas.",
+          ""
+        ],
+        [
+          "D18",
+          "Controle",
+          "Regulação de tensão do controle",
+          "Regulador e capacitores conforme tensão validada",
+          "1",
+          "conjunto",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Não alimentar controle com 5 V por suposição. Não incluir alimentação de motores sem projeto.",
+          ""
+        ],
+        [
+          "D19",
+          "Controle",
+          "Tradução de níveis e polarização",
+          "Buffers/conversores/resistores compatíveis",
+          "A definir",
+          "conjunto",
+          "Não informado",
+          "Não informado",
+          "A definir",
+          "Adaptar dados e comandos entre domínio do controle e núcleo de 5 V; tratar sinais conforme direção e tipo.",
+          ""
+        ],
+        [
+          "D20",
+          "Integração",
+          "Desacoplamento e fiação adicionais",
+          "100 nF por CI, filtragem, fios e jumpers",
+          "A definir",
+          "conjunto",
+          "Não informado",
+          "Não informado",
+          "A definir",
+          "Quantidade adicional para módulos, não reaproveitar contagem do núcleo como se cobrisse tudo.",
+          ""
+        ],
+        [
+          "D21",
+          "Integração",
+          "Protoboards ou placas de módulos adicionais",
+          "Espaço conforme expansões",
+          "A definir",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "Condicional",
+          "As duas já compradas são para começar o núcleo; expansões podem não caber nelas.",
+          ""
+        ]
+      ]
+    },
+    {
+      "name": "Bancada",
+      "rows": [
+        [
+          "ID",
+          "Bloco",
+          "Item",
+          "Modelo / especificação",
+          "Qtd. prevista",
+          "Unidade",
+          "Qtd. comprada",
+          "Compra",
+          "Definição",
+          "Função / observações",
+          "Referência técnica"
+        ],
+        [
+          "B01",
+          "Gravação",
+          "Gravador de EEPROM",
+          "Suporte explícito à AT28C256 e ao sistema de apoio",
+          "1",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Necessário acesso para gravar boot e imagem do SO; pode emprestar no laboratório. Conferir lista de suporte antes de comprar.",
+          "https://www.microchip.com/en-us/product/at28c256"
+        ],
+        [
+          "B02",
+          "Medição",
+          "Multímetro",
+          "Continuidade e tensão contínua",
+          "1",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Acesso necessário para verificar 5 V, polaridade, continuidade e curtos antes de energizar.",
+          ""
+        ],
+        [
+          "B03",
+          "Medição",
+          "Osciloscópio",
+          "Largura de banda e sondas adequadas ao clock",
+          "1",
+          "acesso",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Preferir laboratório. Conferir bordas e níveis: analisador lógico não substitui essa medição analógica.",
+          ""
+        ],
+        [
+          "B04",
+          "Medição",
+          "Analisador lógico",
+          "Entradas compatíveis com 5 V e amostragem adequada",
+          "1",
+          "acesso",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Útil no barramento e serial; usar equipamento do laboratório se disponível. Não presumir tolerância de 5 V.",
+          ""
+        ],
+        [
+          "B05",
+          "Montagem",
+          "Alicate de corte e desencapador",
+          "Adequados a fio de protoboard",
+          "1",
+          "kit",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Pode usar ferramentas existentes/emprestadas.",
+          ""
+        ],
+        [
+          "B06",
+          "Montagem",
+          "Estação de solda e suporte",
+          "Controle de temperatura e apoio seguro",
+          "1",
+          "acesso",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Para PCB; usar laboratório com supervisão e ventilação.",
+          ""
+        ],
+        [
+          "B07",
+          "Montagem",
+          "Consumíveis de solda",
+          "Solda, fluxo, malha/sugador e limpeza",
+          "1",
+          "kit",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Para montagem/retrabalho de PCB, conforme processo e proteção.",
+          ""
+        ],
+        [
+          "B08",
+          "Segurança",
+          "Proteção e bancada",
+          "Óculos, suporte e cuidados ESD",
+          "1",
+          "kit",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Solda com proteção e supervisão, sem corrosão caseira não supervisionada.",
+          ""
+        ],
+        [
+          "B09",
+          "Desenvolvimento",
+          "Computador de apoio",
+          "Linux, USB, teclado e monitor",
+          "1",
+          "acesso",
+          "Não informado",
+          "Não informado",
+          "Modelo definido",
+          "Definido pelo autor; montagem/posse do novo PC não confirmada aqui. Não faz parte do hardware Z80 e não executa a aplicação no lugar dele.",
+          ""
+        ],
+        [
+          "B10",
+          "Software",
+          "Ferramentas de desenvolvimento",
+          "Montador Z80, terminal serial, KiCad, Git, Logisim e Z80Ex",
+          "1",
+          "conjunto",
+          "Não informado",
+          "Não informado",
+          "A definir",
+          "Instalação/configuração, não compra de CI. Modelo de ROM/RAM/UART para Z80Ex ainda precisa ser implementado.",
+          "https://sourceforge.net/projects/z80ex/"
+        ]
+      ]
+    },
+    {
+      "name": "PCB",
+      "rows": [
+        [
+          "ID",
+          "Bloco",
+          "Item",
+          "Modelo / especificação",
+          "Qtd. prevista",
+          "Unidade",
+          "Qtd. comprada",
+          "Compra",
+          "Definição",
+          "Função / observações",
+          "Referência técnica"
+        ],
+        [
+          "P01",
+          "PCB núcleo",
+          "Placa fabricada",
+          "PCB do núcleo, projetada no KiCad",
+          "1",
+          "projeto/lote",
+          "Não informado",
+          "Não informado",
+          "A definir",
+          "Obrigatória na entrega; cotar após validar protoboard e revisar esquemático/layout. Lote mínimo depende do fabricante.",
+          ""
+        ],
+        [
+          "P02",
+          "PCB núcleo",
+          "Soquetes dos CIs",
+          "DIP-40, DIP-28, DIP-16 e demais tamanhos",
+          "A definir",
+          "un.",
+          "Não informado",
+          "Não informado",
+          "A definir",
+          "Quantidades conforme CIs finais. Facilitam manutenção e eventual transferência de CIs da protoboard.",
+          ""
+        ],
+        [
+          "P03",
+          "PCB núcleo",
+          "Conectores de alimentação e serial",
+          "Conectores com polaridade/pinagem identificadas",
+          "A definir",
+          "conjunto",
+          "Não informado",
+          "Não informado",
+          "A definir",
+          "Dimensionar corrente, acesso ao reset, UART e pontos de teste.",
+          ""
+        ],
+        [
+          "P04",
+          "PCB núcleo",
+          "Conectores de expansão",
+          "Barras de pinos/soquetes conforme mapa do barramento",
+          "A definir",
+          "conjunto",
+          "Não informado",
+          "Não informado",
+          "A definir",
+          "Prever expansão, mas não precisa montar vídeo/som/gamepad para entregar o núcleo.",
+          ""
+        ],
+        [
+          "P05",
+          "PCB núcleo",
+          "Botão e passivos para montagem",
+          "Valores e footprints finais do esquema",
+          "A definir",
+          "conjunto",
+          "Não informado",
+          "Não informado",
+          "A definir",
+          "Reutilizar onde viável; passivos/soquetes podem ser extras mesmo transferindo os CIs.",
+          ""
+        ],
+        [
+          "P06",
+          "Mecânica",
+          "Fixação e suporte",
+          "Espaçadores, parafusos e base isolante",
+          "1",
+          "kit",
+          "Não informado",
+          "Não informado",
+          "Validar modelo",
+          "Evitar curto e fios soltos na demonstração; medidas após layout.",
+          ""
+        ],
+        [
+          "P07",
+          "Planejamento",
+          "Conjunto adicional de CIs",
+          "Somente se duas montagens simultâneas forem exigidas",
+          "A definir",
+          "conjunto",
+          "Não informado",
+          "Não informado",
+          "Condicional",
+          "Não comprar CPU/RAM/ROM duplicadas automaticamente. Confirmar com professor se pode transferir os CIs após o checkpoint.",
+          ""
+        ],
+        [
+          "P08",
+          "Expansões",
+          "PCBs de módulos opcionais",
+          "Vídeo, som e controle",
+          "A definir",
+          "projeto/lote",
+          "Não informado",
+          "Não informado",
+          "Condicional",
+          "Somente após mínimo entregue e tempo disponível; não inclui substituir a PCB obrigatória do núcleo.",
+          ""
+        ]
+      ]
+    }
+  ]
+}
