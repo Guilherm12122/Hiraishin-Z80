@@ -2,9 +2,11 @@
 
 Computador de 8 bits de Guilherme de Oliveira Ribeiro, desenvolvido individualmente para o Projeto Garagem / 2026 Computer Faire & Arcade Expo.
 
-Plataforma escolhida: Z80. Objetivo: bootloader e sistema operacional próprios, carregando um jogo autoral de plataforma com controle físico, cor e efeitos sonoros.
+Plataforma escolhida: Z80. Compromisso de entrega: computador funcional em protoboard e PCB, bootloader e sistema operacional próprios, com carregamento e execução de uma aplicação interativa simples em texto pela serial. Computador de apoio com Linux para desenvolvimento e terminal; execução do SO e da aplicação no Z80.
 
 Prioridade definida em 17/10/2026: primeiro concluir o mínimo entregável com Z80, ROM, RAM e terminal serial — boot próprio, SO com comandos e carga/execução de programa interativo. Protoboard, PCB e entregas acadêmicas continuam no escopo. Vídeo, HDMI, som, controle PS2 e jogo gráfico são expansões posteriores, sem bloquear essa primeira entrega. Os critérios de aceite estão no HTML do campo 4.
+
+O Hiraishin Runner também é um diferencial, não a aplicação obrigatória do mínimo. Só será desenvolvido se houver tempo após concluir a entrega principal. O programa mínimo específico ainda será escolhido; adivinhação é uma possibilidade. As respostas dos campos 2, 7 e 8 estão em [docs/respostas.txt](docs/respostas.txt).
 
 ## Documentação
 
