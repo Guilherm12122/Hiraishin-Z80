@@ -11,3 +11,7 @@ Compras registradas: 1 Z80, 1 SRAM e 2 protoboards; tela HDMI informada como dis
 Lista de planejamento, não BOM elétrica final liberada para compra. Driver de clock NMOS, reset, lógica auxiliar, níveis e componentes de interface ainda dependem do esquemático. Não existem preços ou prazos cotados nesta versão.
 
 O arquivo componentes-planejamento-inicial.json preserva o conteúdo inicial. Edições futuras feitas diretamente na planilha não são sincronizadas automaticamente com o Git. Não altera as respostas da proposta nem as permissões de compartilhamento.
+
+## Alinhamento ao mínimo obrigatório
+
+Orientacoes!B2 e B10 e Bancada!J11 foram atualizadas para reforçar o compromisso apenas com o núcleo serial, aplicação simples e fluxo inicial em Assembly Z80 no Linux. Montar, LOAD, enviar e RUN serão etapas separadas; IDE personalizada e deploy automático ficam fora do mínimo. A aba Diferenciais é inventário de possibilidades, não lista de compra obrigatória. Quantidades, compras, demais células e compartilhamento foram preservados. O JSON inicial não foi reescrito como se fosse um retrato atualizado automaticamente.

@@ -5,7 +5,7 @@ O compromisso é entregar o mínimo obrigatório: computador Z80 funcional em pr
 
 2. Ideia em uma frase
 
-Construir o Hiraishin-Z80, um computador de 8 bits com bootloader e sistema operacional próprios, capaz de carregar e executar um programa interativo em texto por terminal serial, com possibilidade de expansão após a conclusão do mínimo obrigatório.
+Construir o Hiraishin-Z80, um computador de 8 bits com bootloader e sistema operacional próprios, capaz de carregar e executar uma aplicação interativa simples em texto por terminal serial.
 
 
 Como a decodificação de endereços será feita?
@@ -24,7 +24,7 @@ O clock da CPU será gerado por um módulo oscilador ativo alimentado em 5 V, co
 
 7. Programa-vitrine
 
-O programa-vitrine da entrega mínima será uma aplicação interativa simples em texto, carregada pelo sistema operacional próprio e executada no Z80, com entrada e saída pelo terminal serial. Um jogo de adivinhação é uma possibilidade; a aplicação específica ainda será definida.
+O programa-vitrine da entrega mínima será uma aplicação interativa simples em texto, escrita inicialmente em Assembly Z80, carregada pelo sistema operacional próprio e executada no Z80, com entrada e saída pelo terminal serial. Um jogo de adivinhação é uma possibilidade; a aplicação específica ainda será definida. Runner e animação não fazem parte do compromisso obrigatório.
 
 Após a conclusão do mínimo obrigatório, e somente se houver tempo, poderá ser desenvolvido o Hiraishin Runner, um jogo autoral inspirado no dinossauro offline do Google Chrome, com salto, obstáculos, pontuação e reinício. Gráficos coloridos, efeitos sonoros e controle PS2 também são diferenciais condicionados ao prazo, não compromissos da entrega mínima.
 
@@ -32,7 +32,7 @@ Após a conclusão do mínimo obrigatório, e somente se houver tempo, poderá s
 8. Entrada e saída
 
 - Entrada — teclado (entrega mínima): o teclado do computador de apoio com Linux enviará comandos e dados pelo terminal serial.
-- Saída — terminal (entrega mínima): exibirá mensagens do sistema e respostas da aplicação em texto na tela do computador de apoio.
+- Saída — terminal (entrega mínima): exibirá mensagens do sistema e respostas da aplicação em texto em uma janela de terminal na tela do computador de apoio, sem vídeo dedicado do Z80.
 
 A comunicação utilizará a UART PC16550D e um adaptador USB–serial TTL com níveis compatíveis. O Linux servirá como terminal e ferramenta de desenvolvimento; o SO e a aplicação serão executados no Z80.
 

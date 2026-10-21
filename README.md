@@ -8,15 +8,18 @@ Prioridade definida em 17/10/2026: primeiro concluir o mínimo entregável com Z
 
 O Hiraishin Runner também é um diferencial, não a aplicação obrigatória do mínimo. Só será desenvolvido se houver tempo após concluir a entrega principal. O programa mínimo específico ainda será escolhido; adivinhação é uma possibilidade. As respostas dos campos 2, 7 e 8 estão em [docs/respostas.txt](docs/respostas.txt).
 
+Escopo obrigatório consolidado em [escopo mínimo e cronograma](docs/escopo-minimo-e-cronograma.md): Assembly Z80 no Linux para boot, SO inicial e primeira aplicação; montagem e envio por comandos separados. IDE personalizada e deploy automático não são requisitos.
+
 ## Documentação
 
 Compras informadas em 17/10/2026: 1 processador Z80, 1 RAM principal e 2 protoboards de 830 pontos. Modelos discutidos e pendências de inspeção estão registrados no HTML. Compra não significa recebimento nem teste concluído.
 
 - [Campo 4: arquitetura definida e guia de estudo](docs/campo-4-arquitetura.html): resposta, mapas, decodificação, exemplos e perguntas de defesa.
 - [Campos 5 e 6: bootloader e sistema operacional](docs/campos-5-e-6-bootloader-e-so.html): guia do reset ao programa, perguntas de revisão e respostas sugeridas para a proposta.
-- [Diagrama oficial da proposta, versão 1.0](docs/diagrama-oficial.svg).
+- [Diagrama atual da proposta: mínimo obrigatório](docs/diagrama-minimo.svg).
+- [Diagrama completo anterior, versão 1.0](docs/diagrama-oficial.svg): histórico das possibilidades de expansão, fora da entrega obrigatória.
 - [Diagrama de blocos e guia de estudo do campo 4](docs/arquitetura-para-estudo.html): abrir o arquivo em um navegador.
 
-O arquivo `campo-4-arquitetura.html` substitui os exemplos do guia inicial como definição da arquitetura para a proposta. O guia inicial é mantido como material histórico. A versão 1.0 define decisões para a proposta; não é um esquemático elétrico validado nem uma lista liberada para compra. Testes e revisão elétrica precedem a fabricação.
+O arquivo `campo-4-arquitetura.html` usa o diagrama mínimo atual. Os guias e as imagens completos anteriores são mantidos como histórico. Diagramas de blocos não são esquemáticos elétricos validados nem listas liberadas para compra. Testes e revisão elétrica precedem a fabricação.
 
 Este é um repositório independente, com histórico próprio. Referências externas utilizadas serão citadas, preservando a autoria dos respectivos projetos.
