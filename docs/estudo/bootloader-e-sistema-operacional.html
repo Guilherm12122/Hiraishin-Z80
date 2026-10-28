@@ -26,7 +26,7 @@
 </tbody></table></div>
 <p><strong>O professor quer acompanhar essa separação:</strong> ligar → iniciar do endereço de reset → carregar o sistema → executar um comando → carregar e executar uma aplicação. Mostrar só uma mensagem fixa na ROM não demonstra tudo isso.</p></section>
 
-<section id="memoria"><h2>2. Onde cada coisa fica no nosso computador</h2><p>Usaremos exatamente o mapa já documentado no <a href="campo-4-arquitetura.html#memoria">campo 4</a>. Não há uma nova distribuição de endereços neste guia.</p>
+<section id="memoria"><h2>2. Onde cada coisa fica no nosso computador</h2><p>Usaremos exatamente o mapa já documentado no <a href="../arquitetura/guia-arquitetura.html#memoria">campo 4</a>. Não há uma nova distribuição de endereços neste guia.</p>
 <div class="scroll"><table><thead><tr><th>Endereços</th><th>Memória</th><th>Conteúdo planejado</th></tr></thead><tbody>
 <tr><td>0000h–3FFFh</td><td>EEPROM · 16 KiB</td><td>Bootloader, vetores e diagnósticos.</td></tr>
 <tr><td>4000h–7FFFh</td><td>Mesma EEPROM · 16 KiB</td><td>Imagem inicial do SO.</td></tr>
@@ -56,7 +56,7 @@ Z80 passa a buscar instruções do SO na RAM.</pre>
 <li><strong>A CPU sai do reset:</strong> no Z80, a execução começa em 0000h. Nosso circuito mapeia a EEPROM nesse endereço.</li>
 <li><strong>Começa o boot:</strong> a posição 0000h conterá o início do código, normalmente um salto para a rotina principal do boot, deixando espaço para organizar os vetores.</li>
 <li><strong>Prepara a pilha:</strong> configura SP para uma região válida da RAM, antes de usar chamadas de subrotina ou operações que dependam da pilha.</li>
-<li><strong>Inicializa a UART:</strong> configura os registros da PC16550D para a comunicação planejada. O alvo inicial é 9.600 baud, 8 bits, sem paridade e um bit de parada.</li>
+<li><strong>Inicializa a interface serial:</strong> prepara as rotinas de entrada e saída usadas pelo SO. A arquitetura definida usa o Arduino Uno (ATmega328P) como periférico paralelo, com 00h para dados e 01h para estado/controle; o SIO/2 é a alternativa. A sequência exata de handshake e a interface elétrica serão detalhadas no esquemático e testadas na bancada.</li>
 <li><strong>Informa a partida:</strong> envia uma mensagem pela serial para indicar que o código inicial está executando.</li>
 <li><strong>Carrega o SO:</strong> copia a imagem da EEPROM, iniciando em 4000h, para a RAM, iniciando em 8000h. Podemos acrescentar verificação da cópia antes de prosseguir.</li>
 <li><strong>Transfere o controle:</strong> executa um salto para a entrada do SO em 8000h.</li>
@@ -92,14 +92,14 @@ HIRA&gt;</pre>
 <section id="carga"><h2>5. Como um programa sai do Linux e chega ao Z80</h2>
 <pre>Arquivo binário no computador Linux
                 ↓ ferramenta de envio
-USB–serial TTL → UART PC16550D → Z80 executando o comando LOAD
+Terminal Linux ↔ interface serial escolhida ↔ Z80 executando o comando LOAD
                                        ↓
                               RAM C000h–EFFFh
                                        ↓ RUN
                               execução em C000h</pre>
 <p>O Linux é a máquina de desenvolvimento e o terminal. O programa precisa ser gerado para <strong>Z80</strong>: um executável nativo de Linux/Ryzen não funciona nessa CPU.</p>
 <h3>Enviar bytes não é o mesmo que executar</h3><ol><li>O SO consulta a UART e recebe um byte.</li><li>O Z80 escreve esse byte no endereço de destino da RAM.</li><li>Repete até receber o programa completo, usando um protocolo de transferência.</li><li>Verifica tamanho, destino e integridade.</li><li>Somente depois, RUN inicia a execução no endereço de entrada.</li></ol>
-<p>O adaptador USB–serial e a UART não sabem, por si, onde começa o programa na RAM. Quem faz essa decisão e as escritas é nosso carregador, executado pelo Z80.</p>
+<p>O terminal e a interface serial não sabem, por si, onde começa o programa na RAM. Quem faz essa decisão e as escritas é nosso carregador, executado pelo Z80.</p>
 <h3>Regras do carregador</h3><ul><li>Na versão inicial, manter o destino na área de aplicação, começando em C000h.</li><li>Rejeitar tamanho zero, tamanho maior que 12 KiB ou qualquer transferência que ultrapasse EFFFh. A verificação deve tratar também estouro aritmético.</li><li>Não permitir que a carga sobrescreva o SO nem a área reservada à pilha.</li><li>Definir início, comprimento e verificação de integridade no protocolo; tratar erro, cancelamento e recebimento incompleto.</li><li>Controlar o ritmo da transmissão para evitar perda de dados na UART. A simples existência de um checksum não impede perda de bytes.</li></ul>
 <div class="note warning"><strong>Ainda será especificado:</strong> formato exato do cabeçalho, algoritmo de verificação, controle de fluxo e ferramenta de envio. Vamos defini-los antes de implementar os dois lados. Um checksum detecta certos erros de transmissão; não é garantia de que o programa está correto ou é seguro.</div>
 <p><strong>Sem armazenamento adicional:</strong> o programa carregado na RAM precisa ser reenviado após desligar ou reiniciar o sistema. O SO, por outro lado, pode ser recarregado automaticamente da imagem na EEPROM.</p></section>
@@ -136,7 +136,7 @@ RUN → execução pelo Z80</pre>
 
 <section id="respostas"><h2>8. Sugestões de resposta para a proposta</h2>
 <div class="note warning">Use estes textos depois de entender o caminho descrito. Assembly é o fluxo inicial escolhido; a convenção de serviços e o protocolo ainda serão especificados. O firmware será desenvolvido e testado, não apresentado como já pronto.</div>
-<h3>Campo 5 — Bootloader</h3><p>O bootloader será próprio, inicialmente escrito em Assembly Z80 e gravado na EEPROM AT28C256, com entrada no endereço de reset 0000h. Ele inicializará a pilha e a comunicação serial pela UART PC16550D, copiará a imagem do sistema operacional da faixa 4000h–7FFFh da EEPROM para 8000h–BFFFh da RAM e transferirá a execução para 8000h. O código inicial permanecerá disponível na EEPROM para repetir a partida após cada reset.</p>
+<h3>Campo 5 — Bootloader</h3><p>O bootloader será próprio, inicialmente escrito em Assembly Z80 e gravado na EEPROM AT28C256, com entrada no endereço de reset 0000h. Ele inicializará a pilha e a interface serial, usando a arquitetura de registradores definida para o Arduino Uno/ATmega328P (00h para dados e 01h para estado/controle; SIO/2 como alternativa), copiará a imagem do sistema operacional da faixa 4000h–7FFFh da EEPROM para 8000h–BFFFh da RAM e transferirá a execução para 8000h. O código inicial permanecerá disponível na EEPROM para repetir a partida após cada reset. A temporização e os detalhes elétricos do handshake serão verificados no esquemático e na bancada.</p>
 <h3>Campo 6 — Sistema operacional</h3><p>O sistema operacional será próprio e minimalista, inicialmente escrito em Assembly Z80 e executado na RAM. Oferecerá um terminal de comandos pela serial, com ajuda, carregamento e execução de programas. O carregador receberá binários do computador de apoio com Linux, verificará tamanho, faixa de destino e integridade e os armazenará na área C000h–EFFFh. O sistema também oferecerá rotinas de entrada e saída para as aplicações e um mecanismo definido de retorno ao prompt. A primeira versão executará uma aplicação por vez, sem sistema de arquivos ou multitarefa.</p></section>
 
 <section id="perguntas"><h2>9. Perguntas para conferir seu entendimento</h2><p>Tente responder antes de abrir a explicação. Não precisa decorar frases: procure explicar o caminho dos dados e das instruções.</p>
@@ -157,9 +157,9 @@ RUN → execução pelo Z80</pre>
 <p><strong>Meta:</strong> conseguir explicar em voz alta reset → busca em ROM → inicialização → cópia → salto → prompt → LOAD → RUN → retorno, indicando em qual memória está o código em cada etapa.</p></section>
 
 <section id="referencias"><h2>10. Referências e próximos detalhes de implementação</h2><ul>
-<li><a href="campo-4-arquitetura.html">Arquitetura e mapas do Hiraishin-Z80</a>: endereços e estratégia local.</li>
+<li><a href="../arquitetura/guia-arquitetura.html">Arquitetura e mapas do Hiraishin-Z80</a>: endereços e estratégia local.</li>
 <li><a href="https://www.zilog.com/docs/z80/z80cpu_um.pdf">Zilog — Z80 CPU User Manual</a>: execução, instruções, reset e uso da pilha.</li>
-<li><a href="https://media.digikey.com/pdf/Data%20Sheets/Texas%20Instruments%20PDFs/PC16550D.pdf">Texas Instruments — PC16550D, cópia arquivada</a>: configuração e status da UART.</li>
+<li>Documentação do Arduino Uno/ATmega328P, dos buffers/travas e do Z80 SIO/2 deverá fundamentar a pinagem, os níveis e a temporização da interface. O Arduino não é eletricamente compatível com o barramento por conexão direta: o acoplamento paralelo e o handshake fazem parte do nosso projeto.</li>
 <li><a href="https://sourceforge.net/projects/z80ex/">Z80Ex</a>: biblioteca escolhida para a emulação da CPU.</li>
 </ul><p>As faixas, comandos sugeridos e sequência de carga são decisões de projeto, não características impostas pelo Z80. Ainda detalharemos o protocolo serial, o formato dos binários, a tabela de serviços, os registradores preservados e os procedimentos de erro. O guia não substitui esses contratos nem testes no hardware.</p>
 <div class="note"><strong>Uso de IA:</strong> material produzido com assistência de IA para revisão e estudo do autor. A exigência do professor é compreender e defender todo item incluído. Não afirmaremos testes, autoria exclusiva sem assistência ou funcionamento que ainda não foram demonstrados.</div></section>

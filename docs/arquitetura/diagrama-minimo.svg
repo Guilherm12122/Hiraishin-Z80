@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="850" viewBox="0 0 1400 850" role="img" aria-labelledby="titulo descricao">
+<title id="titulo">Hiraishin-Z80 — diagrama do mínimo obrigatório</title>
+<desc id="descricao">Reset e clock atendem à CPU Z80. Barramentos conectam EEPROM AT28C256, SRAM KM62256, lógica de decodificação e periférico serial baseado no Arduino Uno/ATmega328P. Portas de E/S: 00h dados e 01h estado/controle, com trava, buffer tri-state e handshake. CI serial Z80 dedicado, como SIO/2, é a alternativa. O terminal Linux conecta-se ao Arduino por USB. Não há vídeo dedicado, som ou gamepad no mínimo.</desc>
+<defs><marker id="seta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#345773"/></marker></defs>
+<style>text{font-family:Arial,sans-serif;fill:#17344c}.titulo{font-size:32px;font-weight:bold}.nome{font-size:23px;font-weight:bold}.codigo{font-size:20px}.nota{font-size:17px}.caixa{stroke:#42637d;stroke-width:2;rx:12}.ligacao{stroke:#345773;stroke-width:3;fill:none}.opcao{stroke:#a46b16;stroke-width:2;stroke-dasharray:8 6;rx:12}</style>
+<rect width="1400" height="850" fill="white"/>
+<text x="700" y="52" text-anchor="middle" class="titulo">Hiraishin-Z80 — mínimo obrigatório</text>
+<rect x="60" y="95" width="250" height="95" fill="#eee7fa" class="caixa"/><text x="185" y="152" text-anchor="middle" class="nome">RESET</text>
+<rect x="465" y="82" width="470" height="120" fill="#dceefd" class="caixa"/><text x="700" y="132" text-anchor="middle" class="nome">CPU Z80</text><text x="700" y="170" text-anchor="middle" class="codigo">Z0840006PSC</text>
+<rect x="1090" y="95" width="250" height="95" fill="#eee7fa" class="caixa"/><text x="1215" y="137" text-anchor="middle" class="nome">CLOCK</text><text x="1215" y="171" text-anchor="middle" class="codigo">1 MHz · planejado</text>
+<path d="M310 142H465" class="ligacao" marker-end="url(#seta)"/><path d="M1090 142H935" class="ligacao" marker-end="url(#seta)"/>
+<path d="M700 202V245" class="ligacao"/>
+<rect x="55" y="245" width="1290" height="80" fill="#f0f4f8" class="caixa"/><text x="700" y="294" text-anchor="middle" class="nome">BARRAMENTOS DO Z80 · endereços · dados · controle</text>
+<path d="M200 325V385 M500 325V385 M800 325V385 M1100 325V385" class="ligacao"/>
+<rect x="60" y="385" width="280" height="115" fill="#fff1d4" class="caixa"/><text x="200" y="430" text-anchor="middle" class="nome">EEPROM</text><text x="200" y="470" text-anchor="middle" class="codigo">AT28C256 · 32 KiB</text>
+<rect x="360" y="385" width="280" height="115" fill="#e0f3e6" class="caixa"/><text x="500" y="430" text-anchor="middle" class="nome">RAM</text><text x="500" y="470" text-anchor="middle" class="codigo">62256 · 32 KiB</text>
+<rect x="660" y="385" width="280" height="115" fill="#f5e5d9" class="caixa"/><text x="800" y="430" text-anchor="middle" class="nome">DECODIFICAÇÃO</text><text x="800" y="470" text-anchor="middle" class="codigo">74HCT138 + lógica</text>
+<rect x="960" y="385" width="380" height="115" fill="#dceefd" class="caixa"/><text x="1150" y="428" text-anchor="middle" class="nome">E/S SERIAL · Arduino</text><text x="1150" y="467" text-anchor="middle" class="codigo">00h dados · 01h estado/controle</text>
+<path d="M800 500V555H570" class="ligacao"/><path d="M800 555H990" class="ligacao"/>
+<rect x="365" y="555" width="410" height="110" fill="#fff8e8" class="opcao"/><text x="570" y="595" text-anchor="middle" class="nome">Interface planejada</text><text x="570" y="632" text-anchor="middle" class="codigo">Uno/ATmega328P · trava + buffer</text>
+<rect x="825" y="555" width="410" height="110" fill="#fff8e8" class="opcao"/><text x="1030" y="595" text-anchor="middle" class="nome">Alternativa · CI serial Z80</text><text x="1030" y="632" text-anchor="middle" class="codigo">ex.: Z80 SIO/2 · se necessário</text>
+<text x="800" y="694" text-anchor="middle" class="nota">Trava de saída, buffer tri-state e handshake ligam o periférico ao barramento; detalhar no esquemático.</text>
+<path d="M570 665V735H700 M1030 665V735H700" class="ligacao"/><path d="M700 735H930" class="ligacao" marker-end="url(#seta)"/>
+<rect x="930" y="700" width="410" height="100" fill="#f4f7fa" class="caixa"/><text x="1135" y="740" text-anchor="middle" class="codigo">USB ↔ terminal no computador Linux</text><text x="1135" y="774" text-anchor="middle" class="nota">teclado · tela · envio de binários</text>
+<text x="60" y="742" class="nota">O Z80 executa bootloader, SO e aplicação. O computador Linux é terminal e ferramenta de desenvolvimento.</text>
+<text x="60" y="778" class="nota">Sem vídeo dedicado, som ou controle de videogame na entrega mínima.</text>
+<text x="700" y="830" text-anchor="middle" class="nota">A opção Arduino é a proposta inicial; o SIO/2 é o plano alternativo se os testes da interface falharem.</text>
+</svg>

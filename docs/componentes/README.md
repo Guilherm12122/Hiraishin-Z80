@@ -1,5 +1,7 @@
 # Componentes e compras no Google Drive
 
+Esta pasta contém a referência para a planilha externa de componentes. Consulte o índice do projeto em `../README.md` para o escopo vigente.
+
 - Pasta: https://drive.google.com/drive/folders/1b4xrnw7_hvnmJILwk8GdOSu_8srhO8-z
 - Planilha nativa: https://docs.google.com/spreadsheets/d/18HAv2fX90gUr8blsECXT2otFXQS_czm7yxga7eUtVMo/edit
 - Criada em 20/10/2026 dentro da pasta IFSP indicada pelo autor.

@@ -1,0 +1,83 @@
+Prioridade da proposta
+
+O compromisso é entregar o mínimo obrigatório: computador Z80 funcional em protoboard e PCB, bootloader e sistema operacional próprios, entrada e saída pela serial, carregamento e execução de uma aplicação interativa simples, testes e entregas acadêmicas. Os diferenciais somente serão desenvolvidos se houver tempo, sem comprometer essa entrega.
+
+
+4. Como será implementada
+
+A máquina usará o Z80 Z0840006PSC, EEPROM paralela AT28C256 (32 KiB) e SRAM 62256 (32 KiB). O mapa de memória será: 0000h–7FFFh para a EEPROM (bootloader em 0000h–3FFFh e imagem do SO em 4000h–7FFFh) e 8000h–FFFFh para a SRAM (SO em execução em 8000h–BFFFh, aplicação em C000h–EFFFh e pilha em F000h–FFFFh). Após o reset, o Z80 inicia em 0000h; o boot copia o SO para a RAM e salta para 8000h.
+
+O espaço de E/S será separado da memória e acessado pelas instruções IN/OUT. Na montagem mínima, a janela 00h–1Fh selecionará a interface serial: porta 00h para dados e 01h para estado/controle. A primeira implementação proposta usa o Arduino Uno (ATmega328P) como ponte USB/serial e periférico paralelo do Z80, com registradores de dados/estado, trava de saída e buffer tri-state no barramento. Será usado handshake para que o Z80 só leia dados estáveis. Como plano alternativo, será avaliado um CI serial dedicado Z80, como o SIO/2. As demais janelas ficam reservadas: 20h–3Fh vídeo, 40h–5Fh som e 60h–7Fh GPIO; não fazem parte da montagem mínima.
+
+O clock inicial será de 1 MHz, por módulo oscilador ativo de 5 V, com condicionamento compatível com a entrada de clock do Z80 NMOS, a confirmar no esquemático. A memória será selecionada por A15 durante /MREQ: A15=0 seleciona EEPROM e A15=1 seleciona SRAM; /RD e /WR qualificam leitura e escrita, mantendo a EEPROM protegida contra escrita. Para E/S, /IORQ e /M1 habilitam o 74HCT138, que decodifica A7–A5 para escolher uma das janelas. Lógica HCT adicional gera as habilitações de leitura/escrita e impede que mais de um dispositivo dirija o barramento de dados ao mesmo tempo.
+
+
+2. Ideia em uma frase
+
+Construir o Hiraishin-Z80, um computador de 8 bits com bootloader e sistema operacional próprios, capaz de carregar e executar uma aplicação interativa simples em texto por terminal serial.
+
+
+Como a decodificação de endereços será feita?
+
+Nos acessos à memória, a linha A15 determinará a seleção: A15 = 0 selecionará a EEPROM, enquanto A15 = 1 selecionará a RAM. Os sinais de leitura e escrita controlarão a operação, mantendo a escrita na EEPROM desabilitada.
+
+Nos acessos de E/S, o decodificador 74HCT138 analisará as linhas A7–A5 para selecionar a janela do periférico correspondente. Quando necessário, os bits inferiores selecionarão um registro dentro desse periférico.
+
+Portas lógicas da família HCT complementarão a seleção, evitando a habilitação indevida de dispositivos durante ciclos de refresh ou reconhecimento de interrupção.
+
+
+Clock?
+
+O clock da CPU será gerado por um módulo oscilador ativo alimentado em 5 V, com frequência inicial de 1 MHz e saída adequada aos requisitos elétricos do Z80 NMOS. Essa frequência foi escolhida para facilitar a montagem e os testes iniciais.
+
+
+7. Programa-vitrine
+
+O programa-vitrine da entrega mínima será uma aplicação interativa simples em texto, escrita inicialmente em Assembly Z80, carregada pelo sistema operacional próprio e executada no Z80, com entrada e saída pelo terminal serial. Um jogo de adivinhação é uma possibilidade; a aplicação específica ainda será definida. Runner e animação não fazem parte do compromisso obrigatório.
+
+Após a conclusão do mínimo obrigatório, e somente se houver tempo, poderá ser desenvolvido o Hiraishin Runner, um jogo autoral inspirado no dinossauro offline do Google Chrome, com salto, obstáculos, pontuação e reinício. Gráficos coloridos, efeitos sonoros e controle PS2 também são diferenciais condicionados ao prazo, não compromissos da entrega mínima.
+
+
+8. Entrada e saída
+
+- Entrada — teclado (entrega mínima): o teclado do computador de apoio com Linux enviará comandos e dados pelo terminal serial.
+- Saída — terminal (entrega mínima): exibirá mensagens do sistema e respostas da aplicação em texto em uma janela de terminal na tela do computador de apoio, sem vídeo dedicado do Z80.
+
+A arquitetura serial fica definida para a proposta como periférico paralelo: Arduino Uno (ATmega328P) faz a ponte USB/serial, e o Z80 acessa dados pela porta 00h e estado/controle pela 01h. Trava de saída, buffer tri-state e handshake fazem a interface com o barramento; os valores e tempos elétricos serão fechados no esquemático e testados antes da montagem final. Se a solução Arduino não funcionar de modo confiável, a alternativa é um CI serial Z80 dedicado, como o SIO/2. O Linux servirá como terminal e ferramenta de desenvolvimento; o SO e a aplicação serão executados no Z80.
+
+Diferenciais possíveis, somente após concluir o mínimo e se houver tempo:
+- Entrada — controle PS2: interface baseada no 82C55A, com adaptação de níveis elétricos.
+- Saída — vídeo colorido: TMS9918A com conversão para a tela HDMI.
+- Saída — som: SN76489AN e circuito de áudio com amplificação.
+
+
+Bootloader (código de incializacao)
+
+Antes da primeira utilização, o bootloader e a imagem do sistema operacional serão gravados na EEPROM por meio de um gravador externo, permanecendo armazenados mesmo sem alimentação.
+
+Após o reset, o Z80 começará a executar o bootloader em 0000h. Esse código configurará o registrador SP (Stack Pointer) para a área de pilha reservada na RAM, inicializará a interface serial escolhida e enviará uma mensagem indicando o início da execução.
+
+Em seguida, copiará a imagem do SO, armazenada a partir de 4000h na EEPROM, para a RAM a partir de 8000h. Por fim, transferirá a execução para 8000h, onde o sistema operacional assumirá o controle.
+
+
+
+SO
+
+O sistema operacional será próprio e minimalista, escrito em Assembly Z80 e executado na RAM a partir de 8000h. A interação ocorrerá por um terminal serial no computador de apoio com Linux, com três comandos. As rotinas de entrada e saída do SO serão separadas da implementação física da interface, para permitir usar a ponte baseada no Arduino ou, como alternativa, um CI serial Z80 dedicado:
+
+- HELP: lista os comandos disponíveis.
+- LOAD: aguarda o envio de um programa binário pelo computador de apoio, verifica seu tamanho e integridade e o armazena na RAM a partir de C000h.
+- RUN: inicia a execução do programa previamente carregado.
+
+O sistema oferecerá chamadas de sistema para que a aplicação possa solicitar operações de entrada e saída, como ler um caractere ou exibir mensagens pela comunicação serial.
+
+Após o término correto da aplicação, o controle retornará ao sistema operacional, que apresentará novamente o prompt. A primeira versão permitirá executar uma aplicação por vez, sem multitarefa ou sistema de arquivos.
+
+
+Como será testado
+
+No Logisim, será testada a lógica de seleção dos dispositivos conforme os mapas de memória e de E/S. O objetivo será verificar se, para cada endereço e combinação de sinais de controle, somente o dispositivo correto é habilitado.
+
+O Z80Ex, integrado a modelos das memórias e do periférico serial proposto, será utilizado para testar o bootloader, a inicialização do sistema operacional, os comandos disponíveis e o carregamento e execução de uma aplicação com entrada e saída. O modelo de software testará os registradores 00h/01h; a temporização elétrica do handshake será validada na protoboard.
+
+Na protoboard, serão verificadas alimentação, clock, reset, leitura e escrita da RAM e comunicação serial, além da execução integrada do sistema. Primeiro será validada a comunicação entre Arduino e Z80; se não funcionar de modo confiável ou consumir tempo excessivo, será adotado o CI serial dedicado. Os testes serão repetidos na PCB, e seus resultados serão registrados no repositório.

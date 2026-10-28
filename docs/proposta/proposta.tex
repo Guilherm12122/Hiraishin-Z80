@@ -1,0 +1,141 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern,microtype}
+\usepackage[margin=1.65cm,top=1.55cm,bottom=1.6cm]{geometry}
+\usepackage{graphicx,xcolor,booktabs,tabularx,array,tikz}
+\usepackage{hyperref}
+\usetikzlibrary{positioning}
+\hypersetup{colorlinks=true,urlcolor=blue!55!black,linkcolor=blue!55!black}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\setlength{\leftmargini}{1.25em}
+\setlength{\itemsep}{0pt}
+\setlength{\parsep}{0pt}
+\setlength{\topsep}{2pt}
+\renewcommand{\arraystretch}{1.16}
+\setlength{\textfloatsep}{10pt}
+\definecolor{ifspblue}{RGB}{23,58,87}
+\definecolor{lightblue}{RGB}{235,243,249}
+\newcommand{\field}[2]{\par\vspace{4pt}\noindent\textbf{#1. #2}\par\nopagebreak[4]}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
+\begin{document}
+\fontsize{9}{10}\selectfont
+\begin{center}
+{\small Instituto Federal de Educação, Ciência e Tecnologia de São Paulo -- Campus Guarulhos\\
+Pós-graduação em Computação Aplicada · Projeto Garagem}
+\par\vspace{4pt}
+{\LARGE\bfseries\color{ifspblue} Hiraishin-Z80}\par
+{\large Proposta de computador de 8 bits}\par
+Guilherme de Oliveira Ribeiro · trabalho individual · outubro de 2026
+\end{center}
+\vspace{8pt}\hrule\vspace{9pt}
+
+\field{1}{Nome da máquina e autor} Hiraishin-Z80. Autor: Guilherme de Oliveira Ribeiro (individual).
+
+\field{2}{Ideia em uma frase} Construir um computador de 8 bits baseado no Z80, com bootloader e sistema operacional próprios, capaz de carregar e executar uma aplicação interativa simples pelo terminal serial.
+
+\field{3}{Plataforma e justificativa} Zilog Z80, CPU Z0840006PSC em encapsulamento DIP-40. A plataforma clássica permite estudar diretamente os barramentos, o mapa de memória, os ciclos de leitura/escrita e a execução de Assembly, mantendo uma montagem didática em protoboard. Como possibilidade de expansão, a arquitetura poderá receber um controle de PlayStation 2 para experimentar um jogo autoral inspirado em jogos clássicos de plataforma, como \textit{Super Mario Bros.}; não é um compromisso da entrega mínima.
+
+\field{4}{Implementação: diagrama, mapas, clock e decodificação}
+\begin{center}
+\begin{tikzpicture}[font=\scriptsize,box/.style={draw=ifspblue,rounded corners,fill=lightblue,align=center,minimum height=8mm,text width=2.65cm},line/.style={draw=ifspblue,thick,-latex},node distance=7mm]
+\node[box] (reset) {RESET\\botão + circuito de partida};
+\node[box,right=5mm of reset,text width=3.4cm] (cpu) {CPU Z80\\Z0840006PSC};
+\node[box,right=5mm of cpu] (clock) {CLOCK\\oscilador ativo 5 V, 1 MHz};
+\draw[line] (reset)--(cpu); \draw[line] (clock)--(cpu);
+\node[box,below=7mm of cpu,text width=12.4cm,minimum height=7mm] (bus) {Barramentos externos: endereços A0--A15 · dados D0--D7 · controle (/MREQ, /IORQ, /RD, /WR, /M1)};
+\draw[line] (cpu)--(bus);
+\coordinate (rowstart) at ([xshift=0.65cm,yshift=-7mm]bus.south west);
+\node[box,anchor=north west,text width=2.4cm,minimum height=1.2cm] (rom) at (rowstart) {EEPROM paralela\\AT28C256 · 32 KiB};
+\node[box,right=3mm of rom,anchor=north west,text width=2.4cm,minimum height=1.2cm] (ram) {SRAM\\62256 · 32 KiB};
+\node[box,right=3mm of ram,anchor=north west,text width=2.4cm,minimum height=1.2cm] (decode) {Decodificação\\74HCT138 + lógica HCT};
+\node[box,right=3mm of decode,anchor=north west,text width=3.0cm,minimum height=1.2cm] (serial) {E/S serial\\Arduino Uno / ATmega328P\\SIO/2 como alternativa};
+\draw[line] (bus.south -| rom.north)--(rom.north);
+\draw[line] (bus.south -| ram.north)--(ram.north);
+\draw[line] (bus.south -| decode.north)--(decode.north);
+\draw[line] (bus.south -| serial.north)--(serial.north);
+\node[box,below=6mm of serial,text width=3.0cm] (linux) {Terminal e envio de binários\\computador Linux};
+\draw[line,<->] (serial)--(linux);
+\node[box,below=7mm of decode,text width=2.8cm,dashed,minimum height=1.2cm] (ps2) {Expansão opcional\\interface de E/S + controle PS2};
+\draw[line,dashed] (decode)--(ps2);
+\end{tikzpicture}
+\end{center}
+\vspace{3pt}
+\begin{minipage}[t]{0.49\linewidth}\raggedright
+\textbf{Mapa de memória}\par
+{\scriptsize\begin{tabular}{@{}p{1.65cm}p{1.65cm}p{3.9cm}@{}}
+\toprule Endereços & Dispositivo & Uso previsto\\\midrule
+0000--3FFFh & EEPROM & Bootloader\\
+4000--7FFFh & EEPROM & Imagem do SO\\
+8000--BFFFh & SRAM & SO em execução\\
+C000--EFFFh & SRAM & Aplicação carregada\\
+F000--FFFFh & SRAM & Pilha e área auxiliar\\
+\bottomrule
+\end{tabular}}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\linewidth}\raggedright
+\textbf{Mapa de E/S (portas)}\par
+{\scriptsize\begin{tabular}{@{}p{1.25cm}p{1.75cm}p{3.4cm}@{}}
+\toprule Portas & Dispositivo & Função\\\midrule
+00h--1Fh & Serial & 00h dados; 01h estado/controle\\
+20h--3Fh & Reservada & Vídeo futuro\\
+40h--5Fh & Reservada & Som futuro\\
+60h--7Fh & Reservada & GPIO futuro\\
+\bottomrule
+\end{tabular}}
+\end{minipage}
+
+\vspace{8pt}
+Na memória, A15 seleciona EEPROM (A15=0) ou SRAM (A15=1); /MREQ, /RD e /WR qualificam o ciclo e a EEPROM ficará protegida contra escrita. Em E/S, /IORQ e /M1 habilitam a decodificação; o 74HCT138 interpreta A7--A5 para selecionar a janela, e a lógica HCT gera as habilitações sem permitir que dois dispositivos dirijam simultaneamente D0--D7. O clock será fornecido por módulo oscilador ativo de 5 V, inicialmente a 1 MHz; condicionamento e reset serão definidos no esquemático e verificados na bancada.
+
+\field{5}{Bootloader} Código próprio, inicialmente em Assembly Z80, gravado na EEPROM AT28C256. Após o reset, inicia em 0000h, configura SP para a área de pilha na SRAM (valor inicial previsto: FFFEh) e inicializa a interface serial. Copia a imagem do SO de 4000h--7FFFh para a SRAM em 8000h--BFFFh e salta para 8000h. A gravação inicial será feita com programador emprestado; se indisponível, será avaliada uma alternativa compatível antes da compra de um gravador.
+
+\field{6}{Sistema operacional} SO próprio e minimalista em Assembly Z80, executado na SRAM a partir de 8000h. O monitor serial oferecerá HELP (lista comandos), LOAD (recebe e valida um binário na área C000h--EFFFh) e RUN (inicia o programa). Rotinas de serviço permitirão à aplicação ler e escrever caracteres pela serial; após retorno normal, o SO reapresentará o prompt. A primeira versão executará um programa por vez, sem sistema de arquivos ou multitarefa.
+
+\begin{samepage}
+\field{7}{Programa-vitrine} A entrega mínima executará uma aplicação interativa simples em Assembly Z80, carregada pelo SO e executada no Z80; um jogo de adivinhação é uma possibilidade. Como diferencial futuro, poderá ser explorado um jogo autoral de plataforma inspirado em clássicos como \textit{Super Mario Bros.}, com controle PS2, somente se o núcleo mínimo estiver funcionando e houver tempo. O jogo e o controle não são compromissos da entrega mínima.
+
+\field{8}{Entrada e saída}
+\begin{itemize}
+\item Entrada: teclado do computador Linux, pelo terminal serial.
+\item Saída: mensagens e respostas em texto no terminal exibido na tela do computador Linux; o programa executa no Z80.
+\item Interface proposta: Arduino Uno (ATmega328P) como ponte USB/serial e periférico paralelo; portas 00h (dados) e 01h (estado/controle), com trava, buffer tri-state e handshake. Se não funcionar de modo confiável, alternativa: CI Z80 SIO/2, após validar clock e interface.
+\item Possibilidade futura: controle de PlayStation 2 por uma interface de E/S na janela GPIO reservada (60h--7Fh); fica fora da montagem mínima.
+\end{itemize}
+\end{samepage}
+
+\field{9}{Placa de circuito impresso} Esquemático e layout serão desenvolvidos no KiCad para uma PCB do núcleo: CPU, EEPROM, SRAM, decodificação, alimentação, clock, reset, interface serial e conectores/pontos de teste. Primeiro será validado o circuito na protoboard; em seguida, a placa será revisada, encomendada a um fabricante e montada com soquetes para os CIs. A PCB não incluirá inicialmente vídeo, som ou controle PS2.
+
+\field{10}{Componentes, fornecedores, prazo e custo estimado} Já disponíveis/recebidos: Z80, SRAM 62256, duas protoboards, Arduino Uno, LEDs, fios/jumpers, tela e capacitores. Cotações consultadas em 21/10/2026: AT28C256-20PI (\href{https://www.mercadolivre.com.br/circuito-integrado-at28c25620pi-dip28-pth-/up/MLBU2251963330}{Mercado Livre}, R\$ 33,87); 74HCT138 (\href{https://www.mercadolivre.com.br/circuito-integrado-decodificador-sn74hct138-com-16-pinos/p/MLB51325395}{Mercado Livre}, R\$ 25,90); kit 10 × 74HCT00 (\href{https://www.mercadolivre.com.br/kit-com-10--74hct00b1-74hct00-circuito-integrado-dip14/up/MLBU3425298485}{Mercado Livre}, R\$ 29,99); fonte regulada 5 V/1 A (\href{https://www.eletrogate.com/fonte-5v-1a}{Eletrogate}, R\$ 18,90); resistores de 330~$\Omega$ (\href{https://www.eletrogate.com/resistor-330r-1-4w-10-unidades}{Eletrogate}, kit R\$ 0,90). Subtotal conhecido desses itens: \textbf{R\$ 109,56}, sem frete/impostos e sem clock, componentes finais de reset/interface e PCB, ainda a cotar. Arduino já disponível: custo incremental R\$ 0; alternativa SIO/2 cotada a R\$ 8,00, sujeita a confirmação. O gravador EEPROM será emprestado se possível; compra do XGecu T48 (cotação R\$ 351,13) é contingência. Prazo depende do estoque, CEP e fornecedor; será confirmado no pedido. O lote 1 foi planejado para 25/10 e o lote 2 para 01/11; compras do lote 3 em 16/11 só após diagnóstico da bancada.
+
+\field{11}{Cronograma e metas}
+\begin{tabularx}{\linewidth}{@{}p{2.2cm}Y@{}}
+\toprule Período & Marco / evidência\\\midrule
+Até 29/10 & Proposta enviada; confirmar componentes e esquema mínimo.\\
+30/10--08/11 & Testar alimentação, clock, reset, seleção de ROM/RAM e primeira saída.\\
+09--16/11 & Boot carrega SO; prompt, LOAD/RUN e aplicação simples testados. Decidir PCB após validar o núcleo e confirmar prazo de fabricação.\\
+17/11--09/12 & Fabricar/montar e testar PCB; organizar documentação, artigo e ensaio da demonstração.\\
+10/12 & Checkpoint do protótipo funcional em protoboard.\\
+14/12, 19h30--22h & Mostra Garagem: ligar, demonstrar boot, SO e aplicação; apresentar pôster e defesa.\\
+Até 17/12, 18h & Entregar artigo e documentação.\\
+\bottomrule
+\end{tabularx}
+
+\field{12}{Riscos e plano B}
+\begin{itemize}
+\item Interface Arduino--Z80 instável: testar primeiro isoladamente e simplificar o handshake; se necessário, migrar para SIO/2 dedicado, confirmando clock e disponibilidade.
+\item Sem gravador emprestado: tentar solução com Arduino somente após validar compatibilidade; como último recurso, comprar gravador com suporte explícito à AT28C256-20PI.
+\item Peça incompatível/atrasada: conferir marcação e datasheet, priorizar componentes do núcleo e só substituir após validar pinagem e níveis elétricos.
+\item PCB atrasada ou com defeito: antecipar a encomenda após validar o protótipo; manter o sistema funcional em protoboard e apresentar o projeto/estado da PCB e evidências de teste, reconhecendo a limitação na rubrica.
+\item Prazo apertado: suspender Runner, vídeo, som e PS2; preservar computador mínimo, documentação e demonstração estável.
+\end{itemize}
+
+\field{13}{Como será testado} No Logisim, verificar seleção exclusiva de ROM/RAM e janelas de E/S em diferentes endereços e sinais de controle. Com Z80Ex e modelos próprios de memória/periférico, testar busca após reset, cópia do SO, prompt, HELP, carga válida/inválida, RUN, entrada/saída e retorno ao SO. Na protoboard, medir 5 V, clock e reset; testar leitura da EEPROM, escrita/leitura da SRAM, barramentos e handshake serial; depois repetir os testes na PCB. Usar multímetro e, se disponíveis, osciloscópio/analisador lógico do laboratório. Registrar casos, resultados e correções no Git; a emulação não substitui o teste elétrico.
+
+\vspace{3pt}\hrule\vspace{3pt}
+\footnotesize\textit{Proposta inicial sujeita a ajustes justificados após simulação e testes. Os itens de vídeo, som e controle PlayStation 2 são diferenciais, não requisitos para concluir o mínimo. O projeto será documentado e defendido pelo autor, que deverá compreender as decisões e o código produzidos com apoio de ferramentas de IA.}
+
+\end{document}

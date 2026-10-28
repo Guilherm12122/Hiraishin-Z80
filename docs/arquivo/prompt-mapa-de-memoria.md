@@ -1,6 +1,6 @@
 # Geração da imagem do mapa de memória
 
-Imagem: `mapa-de-memoria-proposta.png`.
+Imagem: `../proposta/mapa-de-memoria-proposta.png`.
 Método: ferramenta integrada de geração de imagens; não foi usado CLI.
 Conferência visual: cinco faixas, tamanhos, usos e valores de A15 correspondem ao mapa documentado.
 

@@ -2,7 +2,7 @@
 
 ## Escopo obrigatório
 
-Computador Z80 em protoboard e PCB, com EEPROM, RAM, clock, reset, decodificação e UART. Bootloader e SO próprios; entrada e saída em terminal no computador Linux; carregamento e execução de uma aplicação interativa simples. Testes, Git, proposta, artigo, pôster, demonstração e defesa continuam no escopo.
+Computador Z80 em protoboard e PCB, com EEPROM, RAM, clock, reset, decodificação e periférico serial baseado no Arduino. Bootloader e SO próprios; entrada e saída em terminal no computador Linux; carregamento e execução de uma aplicação interativa simples. A interface está definida em nível de arquitetura; testes elétricos e detalhamento do esquemático são etapas de implementação.
 
 Não basta imprimir uma mensagem fixa na ROM: o boot deve carregar e iniciar o SO, que deve carregar e iniciar um programa separado com entrada e saída.
 
@@ -20,7 +20,7 @@ O programa-vitrine será uma aplicação interativa simples em texto, carregada 
 
 - Entrada: teclado do computador de apoio com Linux, por meio do terminal serial.
 - Saída: mensagens e respostas da aplicação em uma janela de terminal na tela desse computador.
-- Comunicação: UART PC16550D e adaptador USB–serial TTL com níveis compatíveis. O Linux apresenta o terminal e envia binários; o Z80 executa o bootloader, o SO e a aplicação.
+- Comunicação serial: Arduino Uno (ATmega328P) como ponte USB/serial e periférico paralelo do Z80; porta 00h transfere dados e 01h lê estado/escreve controle, com trava de saída, buffer tri-state e handshake. Alternativa: CI serial Z80 dedicado, como Z80 SIO/2. O Linux apresenta o terminal e envia binários; o Z80 executa o bootloader, o SO e a aplicação.
 
 ## Fluxo de desenvolvimento escolhido
 
@@ -57,4 +57,4 @@ As janelas abaixo são metas de organização, sujeitas a disponibilidade das pe
 
 Hiraishin Runner, VDP/VRAM/HDMI, som, GPIO/gamepad PS2, linguagem interpretada e interface de deploy. São ideias futuras, sem compra nem prazo comprometidos neste plano. Só reavaliar após a entrega principal estar concluída e documentada.
 
-O mapa de memória é mantido. A UART usa as portas canônicas 00h–07h; as outras janelas existentes são apenas reservas sem dispositivos na montagem mínima. Os diagramas e imagens completos anteriores são preservados como histórico das expansões, não como lista obrigatória.
+O mapa de memória é mantido. A janela serial 00h–1Fh e as portas canônicas 00h (dados) e 01h (estado/controle) estão definidas no nível de arquitetura. As outras janelas existentes são reservas sem dispositivos na montagem mínima. Os diagramas e imagens completos anteriores são preservados como histórico das expansões, não como lista obrigatória.

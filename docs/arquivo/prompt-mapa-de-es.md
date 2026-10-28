@@ -1,6 +1,6 @@
 # Imagem do mapa de E/S
 
-Arquivo: `mapa-de-es-proposta.png`.
+Arquivo: `../proposta/mapa-de-es-proposta.png`.
 Método: geração integrada de imagens, sem CLI.
 Conferência visual: seis linhas, três colunas; códigos e portas canônicas compatíveis com o HTML e o diagrama. Sem indicação de etapas, conforme solicitado. Espelhos de decodificação não listados; explicação permanece no HTML. Espaço de E/S separado da memória.
 

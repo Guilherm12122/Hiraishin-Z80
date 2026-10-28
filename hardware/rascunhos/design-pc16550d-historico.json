@@ -1,0 +1,2264 @@
+{
+  "revision": "0.1",
+  "date": "2026-10-21",
+  "status": "Rascunho histórico de uma proposta com PC16550D; não validado em bancada nem por ERC KiCad. Não representa a opção serial atual nem o plano alternativo já definido.",
+  "scope": "Núcleo mínimo sem vídeo, som ou GPIO. Decisão serial atual: avaliar primeiro uma interface baseada no Arduino Uno/ATmega328P; se falhar, estudar CI serial Z80 dedicado, como SIO/2. Este projeto PC16550D é apenas referência antiga e precisa ser revisto, não montado como está.",
+  "sources": {
+    "z80": "https://www.shop-tes.com/content/Reference/Z8400-Z84C00.pdf",
+    "eeprom": "https://ww1.microchip.com/downloads/en/DeviceDoc/doc0006.pdf",
+    "sram": "https://www.knjn.com/datasheets/KM62256D.pdf",
+    "uart": "https://media.digikey.com/pdf/Data%20Sheets/Texas%20Instruments%20PDFs/PC16550D.pdf",
+    "ahct14": "https://www.ti.com/lit/ds/symlink/sn74ahct14.pdf",
+    "hct32": "https://www.ti.com/lit/ds/symlink/sn74hct32.pdf",
+    "hct138": "https://www.ti.com/lit/ds/symlink/sn74hct138.pdf",
+    "hct74": "https://www.ti.com/lit/ds/symlink/sn74hct74.pdf",
+    "reset": "https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/11184d.pdf",
+    "osc": "https://ecsxtal.com/store/pdf/ecs-2100x.pdf",
+    "usb": "https://ftdichip.com/products/ttl-232r-5v/"
+  },
+  "components": [
+    {
+      "ref": "U1",
+      "model": "Z0840006PSC",
+      "package": "DIP-40",
+      "role": "CPU NMOS; sem DMA/interrupções no núcleo",
+      "source": "https://www.shop-tes.com/content/Reference/Z8400-Z84C00.pdf",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A11",
+          "net": "A11",
+          "type": "output"
+        },
+        {
+          "number": "2",
+          "name": "A12",
+          "net": "A12",
+          "type": "output"
+        },
+        {
+          "number": "3",
+          "name": "A13",
+          "net": "A13",
+          "type": "output"
+        },
+        {
+          "number": "4",
+          "name": "A14",
+          "net": "A14",
+          "type": "output"
+        },
+        {
+          "number": "5",
+          "name": "A15",
+          "net": "A15",
+          "type": "output"
+        },
+        {
+          "number": "6",
+          "name": "CLK",
+          "net": "CLK_CPU",
+          "type": "input"
+        },
+        {
+          "number": "7",
+          "name": "D4",
+          "net": "D4",
+          "type": "bidirectional"
+        },
+        {
+          "number": "8",
+          "name": "D3",
+          "net": "D3",
+          "type": "bidirectional"
+        },
+        {
+          "number": "9",
+          "name": "D5",
+          "net": "D5",
+          "type": "bidirectional"
+        },
+        {
+          "number": "10",
+          "name": "D6",
+          "net": "D6",
+          "type": "bidirectional"
+        },
+        {
+          "number": "11",
+          "name": "VCC",
+          "net": "+5V",
+          "type": "power_in"
+        },
+        {
+          "number": "12",
+          "name": "D2",
+          "net": "D2",
+          "type": "bidirectional"
+        },
+        {
+          "number": "13",
+          "name": "D7",
+          "net": "D7",
+          "type": "bidirectional"
+        },
+        {
+          "number": "14",
+          "name": "D0",
+          "net": "D0",
+          "type": "bidirectional"
+        },
+        {
+          "number": "15",
+          "name": "D1",
+          "net": "D1",
+          "type": "bidirectional"
+        },
+        {
+          "number": "16",
+          "name": "/INT",
+          "net": "INT_N",
+          "type": "input"
+        },
+        {
+          "number": "17",
+          "name": "/NMI",
+          "net": "NMI_N",
+          "type": "input"
+        },
+        {
+          "number": "18",
+          "name": "/HALT",
+          "net": null,
+          "type": "output"
+        },
+        {
+          "number": "19",
+          "name": "/MREQ",
+          "net": "MREQ_N",
+          "type": "output"
+        },
+        {
+          "number": "20",
+          "name": "/IORQ",
+          "net": "IORQ_N",
+          "type": "output"
+        },
+        {
+          "number": "21",
+          "name": "/RD",
+          "net": "RD_N",
+          "type": "output"
+        },
+        {
+          "number": "22",
+          "name": "/WR",
+          "net": "WR_N",
+          "type": "output"
+        },
+        {
+          "number": "23",
+          "name": "/BUSACK",
+          "net": null,
+          "type": "output"
+        },
+        {
+          "number": "24",
+          "name": "/WAIT",
+          "net": "WAIT_N",
+          "type": "input"
+        },
+        {
+          "number": "25",
+          "name": "/BUSREQ",
+          "net": "BUSREQ_N",
+          "type": "input"
+        },
+        {
+          "number": "26",
+          "name": "/RESET",
+          "net": "RESET_N",
+          "type": "input"
+        },
+        {
+          "number": "27",
+          "name": "/M1",
+          "net": "M1_N",
+          "type": "output"
+        },
+        {
+          "number": "28",
+          "name": "/RFSH",
+          "net": "RFSH_N",
+          "type": "output"
+        },
+        {
+          "number": "29",
+          "name": "GND",
+          "net": "GND",
+          "type": "power_in"
+        },
+        {
+          "number": "30",
+          "name": "A0",
+          "net": "A0",
+          "type": "output"
+        },
+        {
+          "number": "31",
+          "name": "A1",
+          "net": "A1",
+          "type": "output"
+        },
+        {
+          "number": "32",
+          "name": "A2",
+          "net": "A2",
+          "type": "output"
+        },
+        {
+          "number": "33",
+          "name": "A3",
+          "net": "A3",
+          "type": "output"
+        },
+        {
+          "number": "34",
+          "name": "A4",
+          "net": "A4",
+          "type": "output"
+        },
+        {
+          "number": "35",
+          "name": "A5",
+          "net": "A5",
+          "type": "output"
+        },
+        {
+          "number": "36",
+          "name": "A6",
+          "net": "A6",
+          "type": "output"
+        },
+        {
+          "number": "37",
+          "name": "A7",
+          "net": "A7",
+          "type": "output"
+        },
+        {
+          "number": "38",
+          "name": "A8",
+          "net": "A8",
+          "type": "output"
+        },
+        {
+          "number": "39",
+          "name": "A9",
+          "net": "A9",
+          "type": "output"
+        },
+        {
+          "number": "40",
+          "name": "A10",
+          "net": "A10",
+          "type": "output"
+        }
+      ]
+    },
+    {
+      "ref": "U2",
+      "model": "AT28C256-15PU",
+      "package": "DIP-28",
+      "role": "EEPROM somente leitura no circuito; 150 ns",
+      "source": "https://ww1.microchip.com/downloads/en/DeviceDoc/doc0006.pdf",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A14",
+          "net": "A14",
+          "type": "input"
+        },
+        {
+          "number": "2",
+          "name": "A12",
+          "net": "A12",
+          "type": "input"
+        },
+        {
+          "number": "3",
+          "name": "A7",
+          "net": "A7",
+          "type": "input"
+        },
+        {
+          "number": "4",
+          "name": "A6",
+          "net": "A6",
+          "type": "input"
+        },
+        {
+          "number": "5",
+          "name": "A5",
+          "net": "A5",
+          "type": "input"
+        },
+        {
+          "number": "6",
+          "name": "A4",
+          "net": "A4",
+          "type": "input"
+        },
+        {
+          "number": "7",
+          "name": "A3",
+          "net": "A3",
+          "type": "input"
+        },
+        {
+          "number": "8",
+          "name": "A2",
+          "net": "A2",
+          "type": "input"
+        },
+        {
+          "number": "9",
+          "name": "A1",
+          "net": "A1",
+          "type": "input"
+        },
+        {
+          "number": "10",
+          "name": "A0",
+          "net": "A0",
+          "type": "input"
+        },
+        {
+          "number": "11",
+          "name": "D0",
+          "net": "D0",
+          "type": "bidirectional"
+        },
+        {
+          "number": "12",
+          "name": "D1",
+          "net": "D1",
+          "type": "bidirectional"
+        },
+        {
+          "number": "13",
+          "name": "D2",
+          "net": "D2",
+          "type": "bidirectional"
+        },
+        {
+          "number": "14",
+          "name": "GND",
+          "net": "GND",
+          "type": "power_in"
+        },
+        {
+          "number": "15",
+          "name": "D3",
+          "net": "D3",
+          "type": "bidirectional"
+        },
+        {
+          "number": "16",
+          "name": "D4",
+          "net": "D4",
+          "type": "bidirectional"
+        },
+        {
+          "number": "17",
+          "name": "D5",
+          "net": "D5",
+          "type": "bidirectional"
+        },
+        {
+          "number": "18",
+          "name": "D6",
+          "net": "D6",
+          "type": "bidirectional"
+        },
+        {
+          "number": "19",
+          "name": "D7",
+          "net": "D7",
+          "type": "bidirectional"
+        },
+        {
+          "number": "20",
+          "name": "/CE",
+          "net": "ROM_CE_N",
+          "type": "input"
+        },
+        {
+          "number": "21",
+          "name": "A10",
+          "net": "A10",
+          "type": "input"
+        },
+        {
+          "number": "22",
+          "name": "/OE",
+          "net": "RD_N",
+          "type": "input"
+        },
+        {
+          "number": "23",
+          "name": "A11",
+          "net": "A11",
+          "type": "input"
+        },
+        {
+          "number": "24",
+          "name": "A9",
+          "net": "A9",
+          "type": "input"
+        },
+        {
+          "number": "25",
+          "name": "A8",
+          "net": "A8",
+          "type": "input"
+        },
+        {
+          "number": "26",
+          "name": "A13",
+          "net": "A13",
+          "type": "input"
+        },
+        {
+          "number": "27",
+          "name": "/WE",
+          "net": "+5V",
+          "type": "input"
+        },
+        {
+          "number": "28",
+          "name": "VCC",
+          "net": "+5V",
+          "type": "power_in"
+        }
+      ]
+    },
+    {
+      "ref": "U3",
+      "model": "KM62256DLP-7",
+      "package": "DIP-28",
+      "role": "SRAM 70 ns; D0–D7 são aliases do barramento",
+      "source": "https://www.knjn.com/datasheets/KM62256D.pdf",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A14",
+          "net": "A14",
+          "type": "input"
+        },
+        {
+          "number": "2",
+          "name": "A12",
+          "net": "A12",
+          "type": "input"
+        },
+        {
+          "number": "3",
+          "name": "A7",
+          "net": "A7",
+          "type": "input"
+        },
+        {
+          "number": "4",
+          "name": "A6",
+          "net": "A6",
+          "type": "input"
+        },
+        {
+          "number": "5",
+          "name": "A5",
+          "net": "A5",
+          "type": "input"
+        },
+        {
+          "number": "6",
+          "name": "A4",
+          "net": "A4",
+          "type": "input"
+        },
+        {
+          "number": "7",
+          "name": "A3",
+          "net": "A3",
+          "type": "input"
+        },
+        {
+          "number": "8",
+          "name": "A2",
+          "net": "A2",
+          "type": "input"
+        },
+        {
+          "number": "9",
+          "name": "A1",
+          "net": "A1",
+          "type": "input"
+        },
+        {
+          "number": "10",
+          "name": "A0",
+          "net": "A0",
+          "type": "input"
+        },
+        {
+          "number": "11",
+          "name": "D0",
+          "net": "D0",
+          "type": "bidirectional"
+        },
+        {
+          "number": "12",
+          "name": "D1",
+          "net": "D1",
+          "type": "bidirectional"
+        },
+        {
+          "number": "13",
+          "name": "D2",
+          "net": "D2",
+          "type": "bidirectional"
+        },
+        {
+          "number": "14",
+          "name": "GND",
+          "net": "GND",
+          "type": "power_in"
+        },
+        {
+          "number": "15",
+          "name": "D3",
+          "net": "D3",
+          "type": "bidirectional"
+        },
+        {
+          "number": "16",
+          "name": "D4",
+          "net": "D4",
+          "type": "bidirectional"
+        },
+        {
+          "number": "17",
+          "name": "D5",
+          "net": "D5",
+          "type": "bidirectional"
+        },
+        {
+          "number": "18",
+          "name": "D6",
+          "net": "D6",
+          "type": "bidirectional"
+        },
+        {
+          "number": "19",
+          "name": "D7",
+          "net": "D7",
+          "type": "bidirectional"
+        },
+        {
+          "number": "20",
+          "name": "/CE",
+          "net": "RAM_CE_N",
+          "type": "input"
+        },
+        {
+          "number": "21",
+          "name": "A10",
+          "net": "A10",
+          "type": "input"
+        },
+        {
+          "number": "22",
+          "name": "/OE",
+          "net": "RD_N",
+          "type": "input"
+        },
+        {
+          "number": "23",
+          "name": "A11",
+          "net": "A11",
+          "type": "input"
+        },
+        {
+          "number": "24",
+          "name": "A9",
+          "net": "A9",
+          "type": "input"
+        },
+        {
+          "number": "25",
+          "name": "A8",
+          "net": "A8",
+          "type": "input"
+        },
+        {
+          "number": "26",
+          "name": "A13",
+          "net": "A13",
+          "type": "input"
+        },
+        {
+          "number": "27",
+          "name": "/WE",
+          "net": "RAM_WE_N",
+          "type": "input"
+        },
+        {
+          "number": "28",
+          "name": "VCC",
+          "net": "+5V",
+          "type": "power_in"
+        }
+      ]
+    },
+    {
+      "ref": "U4",
+      "model": "PC16550DN",
+      "package": "DIP-40",
+      "role": "UART 9600 baud, 8N1; polling; PDIP-40",
+      "source": "https://media.digikey.com/pdf/Data%20Sheets/Texas%20Instruments%20PDFs/PC16550D.pdf",
+      "pins": [
+        {
+          "number": "1",
+          "name": "D0",
+          "net": "D0",
+          "type": "bidirectional"
+        },
+        {
+          "number": "2",
+          "name": "D1",
+          "net": "D1",
+          "type": "bidirectional"
+        },
+        {
+          "number": "3",
+          "name": "D2",
+          "net": "D2",
+          "type": "bidirectional"
+        },
+        {
+          "number": "4",
+          "name": "D3",
+          "net": "D3",
+          "type": "bidirectional"
+        },
+        {
+          "number": "5",
+          "name": "D4",
+          "net": "D4",
+          "type": "bidirectional"
+        },
+        {
+          "number": "6",
+          "name": "D5",
+          "net": "D5",
+          "type": "bidirectional"
+        },
+        {
+          "number": "7",
+          "name": "D6",
+          "net": "D6",
+          "type": "bidirectional"
+        },
+        {
+          "number": "8",
+          "name": "D7",
+          "net": "D7",
+          "type": "bidirectional"
+        },
+        {
+          "number": "9",
+          "name": "RCLK",
+          "net": "BAUD16",
+          "type": "input"
+        },
+        {
+          "number": "10",
+          "name": "SIN",
+          "net": "UART_RX",
+          "type": "input"
+        },
+        {
+          "number": "11",
+          "name": "SOUT",
+          "net": "UART_TX",
+          "type": "output"
+        },
+        {
+          "number": "12",
+          "name": "CS0",
+          "net": "+5V",
+          "type": "input"
+        },
+        {
+          "number": "13",
+          "name": "CS1",
+          "net": "+5V",
+          "type": "input"
+        },
+        {
+          "number": "14",
+          "name": "/CS2",
+          "net": "UART_PRESEL_N",
+          "type": "input"
+        },
+        {
+          "number": "15",
+          "name": "/BAUDOUT",
+          "net": "BAUD16",
+          "type": "output"
+        },
+        {
+          "number": "16",
+          "name": "XIN",
+          "net": "CLK_UART",
+          "type": "input"
+        },
+        {
+          "number": "17",
+          "name": "XOUT",
+          "net": null,
+          "type": "output"
+        },
+        {
+          "number": "18",
+          "name": "/WR",
+          "net": "UART_WR_N",
+          "type": "input"
+        },
+        {
+          "number": "19",
+          "name": "WR",
+          "net": "GND",
+          "type": "input"
+        },
+        {
+          "number": "20",
+          "name": "VSS",
+          "net": "GND",
+          "type": "power_in"
+        },
+        {
+          "number": "21",
+          "name": "/RD",
+          "net": "UART_RD_N",
+          "type": "input"
+        },
+        {
+          "number": "22",
+          "name": "RD",
+          "net": "GND",
+          "type": "input"
+        },
+        {
+          "number": "23",
+          "name": "DDIS",
+          "net": null,
+          "type": "output"
+        },
+        {
+          "number": "24",
+          "name": "/TXRDY",
+          "net": null,
+          "type": "output"
+        },
+        {
+          "number": "25",
+          "name": "/ADS",
+          "net": "GND",
+          "type": "input"
+        },
+        {
+          "number": "26",
+          "name": "A2",
+          "net": "A2",
+          "type": "input"
+        },
+        {
+          "number": "27",
+          "name": "A1",
+          "net": "A1",
+          "type": "input"
+        },
+        {
+          "number": "28",
+          "name": "A0",
+          "net": "A0",
+          "type": "input"
+        },
+        {
+          "number": "29",
+          "name": "/RXRDY",
+          "net": null,
+          "type": "output"
+        },
+        {
+          "number": "30",
+          "name": "INTR",
+          "net": null,
+          "type": "output"
+        },
+        {
+          "number": "31",
+          "name": "/OUT2",
+          "net": null,
+          "type": "output"
+        },
+        {
+          "number": "32",
+          "name": "/RTS",
+          "net": null,
+          "type": "output"
+        },
+        {
+          "number": "33",
+          "name": "/DTR",
+          "net": null,
+          "type": "output"
+        },
+        {
+          "number": "34",
+          "name": "/OUT1",
+          "net": null,
+          "type": "output"
+        },
+        {
+          "number": "35",
+          "name": "MR",
+          "net": "RESET_H",
+          "type": "input"
+        },
+        {
+          "number": "36",
+          "name": "/CTS",
+          "net": "+5V",
+          "type": "input"
+        },
+        {
+          "number": "37",
+          "name": "/DSR",
+          "net": "+5V",
+          "type": "input"
+        },
+        {
+          "number": "38",
+          "name": "/DCD",
+          "net": "+5V",
+          "type": "input"
+        },
+        {
+          "number": "39",
+          "name": "/RI",
+          "net": "+5V",
+          "type": "input"
+        },
+        {
+          "number": "40",
+          "name": "VDD",
+          "net": "+5V",
+          "type": "power_in"
+        }
+      ]
+    },
+    {
+      "ref": "U5",
+      "model": "SN74AHCT14N",
+      "package": "DIP-14",
+      "role": "Clock, Schmitt de reset e inversões; não substituir por HC14 sem revisão",
+      "source": "https://www.ti.com/lit/ds/symlink/sn74ahct14.pdf",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1A",
+          "net": "OSC_CPU",
+          "type": "input"
+        },
+        {
+          "number": "2",
+          "name": "1Y",
+          "net": "CLK_INV",
+          "type": "output"
+        },
+        {
+          "number": "3",
+          "name": "2A",
+          "net": "CLK_INV",
+          "type": "input"
+        },
+        {
+          "number": "4",
+          "name": "2Y",
+          "net": "CLK_CPU",
+          "type": "output"
+        },
+        {
+          "number": "5",
+          "name": "3A",
+          "net": "RFSH_N",
+          "type": "input"
+        },
+        {
+          "number": "6",
+          "name": "3Y",
+          "net": "RFSH_H",
+          "type": "output"
+        },
+        {
+          "number": "7",
+          "name": "GND",
+          "net": "GND",
+          "type": "power_in"
+        },
+        {
+          "number": "8",
+          "name": "4Y",
+          "net": "A15_N",
+          "type": "output"
+        },
+        {
+          "number": "9",
+          "name": "4A",
+          "net": "A15",
+          "type": "input"
+        },
+        {
+          "number": "10",
+          "name": "5Y",
+          "net": "RESET_CLEAR_H",
+          "type": "output"
+        },
+        {
+          "number": "11",
+          "name": "5A",
+          "net": "RESET_RAW_N",
+          "type": "input"
+        },
+        {
+          "number": "12",
+          "name": "6Y",
+          "net": "RESET_CLEAR_N",
+          "type": "output"
+        },
+        {
+          "number": "13",
+          "name": "6A",
+          "net": "RESET_CLEAR_H",
+          "type": "input"
+        },
+        {
+          "number": "14",
+          "name": "VCC",
+          "net": "+5V",
+          "type": "power_in"
+        }
+      ]
+    },
+    {
+      "ref": "U6",
+      "model": "SN74HCT32N",
+      "package": "DIP-14",
+      "role": "Quatro OR: seleção das memórias e escrita RAM",
+      "source": "https://www.ti.com/lit/ds/symlink/sn74hct32.pdf",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1A",
+          "net": "MREQ_N",
+          "type": "input"
+        },
+        {
+          "number": "2",
+          "name": "1B",
+          "net": "RFSH_H",
+          "type": "input"
+        },
+        {
+          "number": "3",
+          "name": "1Y",
+          "net": "MEM_ACCESS_N",
+          "type": "output"
+        },
+        {
+          "number": "4",
+          "name": "2A",
+          "net": "MEM_ACCESS_N",
+          "type": "input"
+        },
+        {
+          "number": "5",
+          "name": "2B",
+          "net": "A15",
+          "type": "input"
+        },
+        {
+          "number": "6",
+          "name": "2Y",
+          "net": "ROM_CE_N",
+          "type": "output"
+        },
+        {
+          "number": "7",
+          "name": "GND",
+          "net": "GND",
+          "type": "power_in"
+        },
+        {
+          "number": "8",
+          "name": "3Y",
+          "net": "RAM_CE_N",
+          "type": "output"
+        },
+        {
+          "number": "9",
+          "name": "3A",
+          "net": "MEM_ACCESS_N",
+          "type": "input"
+        },
+        {
+          "number": "10",
+          "name": "3B",
+          "net": "A15_N",
+          "type": "input"
+        },
+        {
+          "number": "11",
+          "name": "4Y",
+          "net": "RAM_WE_N",
+          "type": "output"
+        },
+        {
+          "number": "12",
+          "name": "4A",
+          "net": "MEM_ACCESS_N",
+          "type": "input"
+        },
+        {
+          "number": "13",
+          "name": "4B",
+          "net": "WR_N",
+          "type": "input"
+        },
+        {
+          "number": "14",
+          "name": "VCC",
+          "net": "+5V",
+          "type": "power_in"
+        }
+      ]
+    },
+    {
+      "ref": "U7",
+      "model": "SN74HCT32N",
+      "package": "DIP-14",
+      "role": "Qualifica strobes UART por IORQ; duas portas não usadas",
+      "source": "https://www.ti.com/lit/ds/symlink/sn74hct32.pdf",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1A",
+          "net": "RD_N",
+          "type": "input"
+        },
+        {
+          "number": "2",
+          "name": "1B",
+          "net": "IORQ_N",
+          "type": "input"
+        },
+        {
+          "number": "3",
+          "name": "1Y",
+          "net": "UART_RD_N",
+          "type": "output"
+        },
+        {
+          "number": "4",
+          "name": "2A",
+          "net": "WR_N",
+          "type": "input"
+        },
+        {
+          "number": "5",
+          "name": "2B",
+          "net": "IORQ_N",
+          "type": "input"
+        },
+        {
+          "number": "6",
+          "name": "2Y",
+          "net": "UART_WR_N",
+          "type": "output"
+        },
+        {
+          "number": "7",
+          "name": "GND",
+          "net": "GND",
+          "type": "power_in"
+        },
+        {
+          "number": "8",
+          "name": "3Y",
+          "net": null,
+          "type": "output"
+        },
+        {
+          "number": "9",
+          "name": "3A",
+          "net": "GND",
+          "type": "input"
+        },
+        {
+          "number": "10",
+          "name": "3B",
+          "net": "GND",
+          "type": "input"
+        },
+        {
+          "number": "11",
+          "name": "4Y",
+          "net": null,
+          "type": "output"
+        },
+        {
+          "number": "12",
+          "name": "4A",
+          "net": "GND",
+          "type": "input"
+        },
+        {
+          "number": "13",
+          "name": "4B",
+          "net": "GND",
+          "type": "input"
+        },
+        {
+          "number": "14",
+          "name": "VCC",
+          "net": "+5V",
+          "type": "power_in"
+        }
+      ]
+    },
+    {
+      "ref": "U8",
+      "model": "SN74HCT138N",
+      "package": "DIP-16",
+      "role": "Pré-seleção antecipada de endereço; acesso efetivo qualificado em U7",
+      "source": "https://www.ti.com/lit/ds/symlink/sn74hct138.pdf",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A",
+          "net": "A5",
+          "type": "input"
+        },
+        {
+          "number": "2",
+          "name": "B",
+          "net": "A6",
+          "type": "input"
+        },
+        {
+          "number": "3",
+          "name": "C",
+          "net": "A7",
+          "type": "input"
+        },
+        {
+          "number": "4",
+          "name": "/G2A",
+          "net": "GND",
+          "type": "input"
+        },
+        {
+          "number": "5",
+          "name": "/G2B",
+          "net": "RESET_H",
+          "type": "input"
+        },
+        {
+          "number": "6",
+          "name": "G1",
+          "net": "M1_N",
+          "type": "input"
+        },
+        {
+          "number": "7",
+          "name": "/Y7",
+          "net": null,
+          "type": "output"
+        },
+        {
+          "number": "8",
+          "name": "GND",
+          "net": "GND",
+          "type": "power_in"
+        },
+        {
+          "number": "9",
+          "name": "/Y6",
+          "net": null,
+          "type": "output"
+        },
+        {
+          "number": "10",
+          "name": "/Y5",
+          "net": null,
+          "type": "output"
+        },
+        {
+          "number": "11",
+          "name": "/Y4",
+          "net": null,
+          "type": "output"
+        },
+        {
+          "number": "12",
+          "name": "/Y3",
+          "net": null,
+          "type": "output"
+        },
+        {
+          "number": "13",
+          "name": "/Y2",
+          "net": null,
+          "type": "output"
+        },
+        {
+          "number": "14",
+          "name": "/Y1",
+          "net": null,
+          "type": "output"
+        },
+        {
+          "number": "15",
+          "name": "/Y0",
+          "net": "UART_PRESEL_N",
+          "type": "output"
+        },
+        {
+          "number": "16",
+          "name": "VCC",
+          "net": "+5V",
+          "type": "power_in"
+        }
+      ]
+    },
+    {
+      "ref": "U9",
+      "model": "MCP120-485DI/TO",
+      "package": "TO-92 D",
+      "role": "Supervisor de partida; bondout D (RST,VDD,VSS), não genérico TO-92",
+      "source": "https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/11184d.pdf",
+      "pins": [
+        {
+          "number": "1",
+          "name": "/RST",
+          "net": "RESET_RAW_N",
+          "type": "open_collector"
+        },
+        {
+          "number": "2",
+          "name": "VDD",
+          "net": "+5V",
+          "type": "power_in"
+        },
+        {
+          "number": "3",
+          "name": "VSS",
+          "net": "GND",
+          "type": "power_in"
+        }
+      ]
+    },
+    {
+      "ref": "U10",
+      "model": "SN74HCT74N",
+      "package": "DIP-14",
+      "role": "Reset: asserção assíncrona e liberação sincronizada na fase invertida",
+      "source": "https://www.ti.com/lit/ds/symlink/sn74hct74.pdf",
+      "pins": [
+        {
+          "number": "1",
+          "name": "/1CLR",
+          "net": "RESET_CLEAR_N",
+          "type": "input"
+        },
+        {
+          "number": "2",
+          "name": "1D",
+          "net": "+5V",
+          "type": "input"
+        },
+        {
+          "number": "3",
+          "name": "1CLK",
+          "net": "CLK_INV",
+          "type": "input"
+        },
+        {
+          "number": "4",
+          "name": "/1PRE",
+          "net": "+5V",
+          "type": "input"
+        },
+        {
+          "number": "5",
+          "name": "1Q",
+          "net": "RESET_SYNC1",
+          "type": "output"
+        },
+        {
+          "number": "6",
+          "name": "/1Q",
+          "net": null,
+          "type": "output"
+        },
+        {
+          "number": "7",
+          "name": "GND",
+          "net": "GND",
+          "type": "power_in"
+        },
+        {
+          "number": "8",
+          "name": "/2Q",
+          "net": "RESET_H",
+          "type": "output"
+        },
+        {
+          "number": "9",
+          "name": "2Q",
+          "net": "RESET_N",
+          "type": "output"
+        },
+        {
+          "number": "10",
+          "name": "/2PRE",
+          "net": "+5V",
+          "type": "input"
+        },
+        {
+          "number": "11",
+          "name": "2CLK",
+          "net": "CLK_INV",
+          "type": "input"
+        },
+        {
+          "number": "12",
+          "name": "2D",
+          "net": "RESET_SYNC1",
+          "type": "input"
+        },
+        {
+          "number": "13",
+          "name": "/2CLR",
+          "net": "RESET_CLEAR_N",
+          "type": "input"
+        },
+        {
+          "number": "14",
+          "name": "VCC",
+          "net": "+5V",
+          "type": "power_in"
+        }
+      ]
+    },
+    {
+      "ref": "X1",
+      "model": "ECS-2100AX-1.0MHZ",
+      "package": "Half-DIP-8",
+      "role": "Oscilador ativo half-size; pinos 1/4/5/8; série legada NRND",
+      "source": "https://ecsxtal.com/store/pdf/ecs-2100x.pdf",
+      "pins": [
+        {
+          "number": "1",
+          "name": "NC",
+          "net": null,
+          "type": "no_connect"
+        },
+        {
+          "number": "4",
+          "name": "GND",
+          "net": "GND",
+          "type": "power_in"
+        },
+        {
+          "number": "5",
+          "name": "OUT",
+          "net": "OSC_CPU",
+          "type": "output"
+        },
+        {
+          "number": "8",
+          "name": "VDD",
+          "net": "+5V",
+          "type": "power_in"
+        }
+      ]
+    },
+    {
+      "ref": "X2",
+      "model": "ECS-2100AX-1.8432MHZ",
+      "package": "Half-DIP-8",
+      "role": "Oscilador ativo half-size; pinos 1/4/5/8; série legada NRND",
+      "source": "https://ecsxtal.com/store/pdf/ecs-2100x.pdf",
+      "pins": [
+        {
+          "number": "1",
+          "name": "NC",
+          "net": null,
+          "type": "no_connect"
+        },
+        {
+          "number": "4",
+          "name": "GND",
+          "net": "GND",
+          "type": "power_in"
+        },
+        {
+          "number": "5",
+          "name": "OUT",
+          "net": "CLK_UART",
+          "type": "output"
+        },
+        {
+          "number": "8",
+          "name": "VDD",
+          "net": "+5V",
+          "type": "power_in"
+        }
+      ]
+    },
+    {
+      "ref": "R1",
+      "model": "4.7k 1%",
+      "package": "THT",
+      "role": "Pull-up externo do supervisor open-drain",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "RESET_RAW_N",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "+5V",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R2",
+      "model": "100R 1%",
+      "package": "THT",
+      "role": "Limita descarga do capacitor pelo botão",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "RESET_RAW_N",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "RESET_BUTTON",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R3",
+      "model": "10k 1%",
+      "package": "THT",
+      "role": "Pull-up de INT_N",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "INT_N",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "+5V",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R4",
+      "model": "10k 1%",
+      "package": "THT",
+      "role": "Pull-up de NMI_N",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "NMI_N",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "+5V",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R5",
+      "model": "10k 1%",
+      "package": "THT",
+      "role": "Pull-up de WAIT_N",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "WAIT_N",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "+5V",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R6",
+      "model": "10k 1%",
+      "package": "THT",
+      "role": "Pull-up de BUSREQ_N",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "BUSREQ_N",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "+5V",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R7",
+      "model": "10k 1%",
+      "package": "THT",
+      "role": "Pull-up de UART_RX",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "UART_RX",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "+5V",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R8",
+      "model": "10k 1%",
+      "package": "THT",
+      "role": "Pull-up de MREQ_N",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "MREQ_N",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "+5V",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R9",
+      "model": "10k 1%",
+      "package": "THT",
+      "role": "Pull-up de IORQ_N",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "IORQ_N",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "+5V",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R10",
+      "model": "10k 1%",
+      "package": "THT",
+      "role": "Pull-up de RD_N",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "RD_N",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "+5V",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R11",
+      "model": "10k 1%",
+      "package": "THT",
+      "role": "Pull-up de WR_N",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "WR_N",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "+5V",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R12",
+      "model": "10k 1%",
+      "package": "THT",
+      "role": "Pull-up de RFSH_N",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "RFSH_N",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "+5V",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R13",
+      "model": "10k 1%",
+      "package": "THT",
+      "role": "Pull-up de M1_N",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "M1_N",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "+5V",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R14",
+      "model": "1k 1%",
+      "package": "THT",
+      "role": "Série na entrada RX; não é isolamento nem conversor",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "UART_RX",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "PC_TX",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R15",
+      "model": "1k 1%",
+      "package": "THT",
+      "role": "Série na saída TX; não é isolamento nem conversor",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "UART_TX",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "PC_RX",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C1",
+      "model": "100nF 50V X7R",
+      "package": "THT",
+      "role": "Desacoplamento junto a U1",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "+5V",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C2",
+      "model": "100nF 50V X7R",
+      "package": "THT",
+      "role": "Desacoplamento junto a U2",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "+5V",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C3",
+      "model": "100nF 50V X7R",
+      "package": "THT",
+      "role": "Desacoplamento junto a U3",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "+5V",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C4",
+      "model": "100nF 50V X7R",
+      "package": "THT",
+      "role": "Desacoplamento junto a U4",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "+5V",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C5",
+      "model": "100nF 50V X7R",
+      "package": "THT",
+      "role": "Desacoplamento junto a U5",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "+5V",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C6",
+      "model": "100nF 50V X7R",
+      "package": "THT",
+      "role": "Desacoplamento junto a U6",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "+5V",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C7",
+      "model": "100nF 50V X7R",
+      "package": "THT",
+      "role": "Desacoplamento junto a U7",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "+5V",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C8",
+      "model": "100nF 50V X7R",
+      "package": "THT",
+      "role": "Desacoplamento junto a U8",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "+5V",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C9",
+      "model": "100nF 50V X7R",
+      "package": "THT",
+      "role": "Desacoplamento junto a U9",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "+5V",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C10",
+      "model": "100nF 50V X7R",
+      "package": "THT",
+      "role": "Desacoplamento junto a U10",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "+5V",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C11",
+      "model": "100nF 50V X7R",
+      "package": "THT",
+      "role": "Desacoplamento junto a X1",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "+5V",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C12",
+      "model": "100nF 50V X7R",
+      "package": "THT",
+      "role": "Desacoplamento junto a X2",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "+5V",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C13",
+      "model": "100nF 50V X7R",
+      "package": "THT",
+      "role": "Filtro do botão antes do Schmitt",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "RESET_RAW_N",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C14",
+      "model": "47uF 16V",
+      "package": "Eletrolítico radial",
+      "role": "Reservatório; pino 1 positivo",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "+5V",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "SW1",
+      "model": "Pulsador NA",
+      "package": "Botão THT",
+      "role": "Reset manual",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "RESET_BUTTON",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "F1",
+      "model": "RXEF110",
+      "package": "PTC radial",
+      "role": "PTC 1.1 A hold; medir queda de tensão, não proteção de polaridade",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "VIN_5V",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "+5V",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "J1",
+      "model": "Entrada 5V regulados",
+      "package": "Conector 2 pinos",
+      "role": "Fonte externa; alvo 5 V ±2%, 2 A; sem ligação de rede",
+      "source": "",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+5V externo",
+          "net": "VIN_5V",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "J2",
+      "model": "FTDI TTL-232R-5V",
+      "package": "Header 2.54mm 1x6",
+      "role": "Conector serial 1x6; VCC USB isolado; sem RTS/CTS no software",
+      "source": "https://ftdichip.com/products/ttl-232r-5v/",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND preto",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "CTS# marrom",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "3",
+          "name": "VCC vermelho",
+          "net": null,
+          "type": "no_connect"
+        },
+        {
+          "number": "4",
+          "name": "TXD laranja",
+          "net": "PC_TX",
+          "type": "passive"
+        },
+        {
+          "number": "5",
+          "name": "RXD amarelo",
+          "net": "PC_RX",
+          "type": "passive"
+        },
+        {
+          "number": "6",
+          "name": "RTS# verde",
+          "net": null,
+          "type": "no_connect"
+        }
+      ]
+    }
+  ],
+  "logic": [
+    {
+      "kind": "NOT",
+      "ref": "U5",
+      "inputs": [
+        1
+      ],
+      "output": 2
+    },
+    {
+      "kind": "NOT",
+      "ref": "U5",
+      "inputs": [
+        3
+      ],
+      "output": 4
+    },
+    {
+      "kind": "NOT",
+      "ref": "U5",
+      "inputs": [
+        5
+      ],
+      "output": 6
+    },
+    {
+      "kind": "NOT",
+      "ref": "U5",
+      "inputs": [
+        9
+      ],
+      "output": 8
+    },
+    {
+      "kind": "NOT",
+      "ref": "U5",
+      "inputs": [
+        11
+      ],
+      "output": 10
+    },
+    {
+      "kind": "NOT",
+      "ref": "U5",
+      "inputs": [
+        13
+      ],
+      "output": 12
+    },
+    {
+      "kind": "OR",
+      "ref": "U6",
+      "inputs": [
+        1,
+        2
+      ],
+      "output": 3
+    },
+    {
+      "kind": "OR",
+      "ref": "U6",
+      "inputs": [
+        4,
+        5
+      ],
+      "output": 6
+    },
+    {
+      "kind": "OR",
+      "ref": "U6",
+      "inputs": [
+        9,
+        10
+      ],
+      "output": 8
+    },
+    {
+      "kind": "OR",
+      "ref": "U6",
+      "inputs": [
+        12,
+        13
+      ],
+      "output": 11
+    },
+    {
+      "kind": "OR",
+      "ref": "U7",
+      "inputs": [
+        1,
+        2
+      ],
+      "output": 3
+    },
+    {
+      "kind": "OR",
+      "ref": "U7",
+      "inputs": [
+        4,
+        5
+      ],
+      "output": 6
+    }
+  ]
+}
