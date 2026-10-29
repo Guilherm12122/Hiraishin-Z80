@@ -1,0 +1,311 @@
+<circuit version="1.1.0-SR2" rev="260312" stepSize="1000000" stepsPS="1000000" NLsteps="100000" reaStep="1000000" animate="0" >
+
+<item itemtype="MCU" CircId="Z80-1" mainComp="false" Show_id="true" Show_Val="false" Pos="-240,-116" rotation="0" hflip="1" vflip="1" label="Z80-1" idLabPos="0,-20" labelrot="0" valLabPos="-16,20" valLabRot="0" Logic_Symbol="false" Producer="Zilog" CMOS="false" Single cycle I/O="false" Int_Vector="false" MainMcu="true" />
+
+<item itemtype="Clock" CircId="Clock-2" mainComp="false" Show_id="false" Show_Val="false" Pos="-760,-68" rotation="0" hflip="1" vflip="1" label="Clock-2" idLabPos="-64,-24" labelrot="0" valLabPos="-16,8" valLabRot="0" Out="true" Running="true" Voltage="5 V" Freq="1 kHz" Always_On="false" />
+
+<item itemtype="Fixed Voltage" CircId="Fixed Voltage-3" mainComp="false" Show_id="false" Show_Val="false" Pos="52,-160" rotation="-180" hflip="1" vflip="1" label="Fixed Voltage-3" idLabPos="-64,-24" labelrot="0" valLabPos="-16,8" valLabRot="0" Voltage="5 V" Out="true" />
+
+<item itemtype="Memory" CircId="Memory-9" mainComp="false" Show_id="false" Show_Val="false" Pos="36,-276" rotation="0" hflip="1" vflip="1" label="ROM" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Address_Bits="15 _bits" Data_Bits="8 _bits" Persistent="true" Asynch="true" Input_High_V="2.5 V" Input_Low_V="2.5 V" Input_Imped="1000 MΩ" Out_High_V="5 V" Out_Low_V="0 V" Out_Imped="40 Ω" Inverted="false" Open_Collector="false" pd_n="1 _Gates" Tpd_ps="10 ns" Tr_ps="3 ns" Tf_ps="4 ns" />
+
+<item itemtype="Or Gate" CircId="Or Gate-19" mainComp="false" Show_id="false" Show_Val="false" Pos="-288,-160" rotation="-90" hflip="1" vflip="1" label="Or Gate-19" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Input_High_V="2.5 V" Input_Low_V="2.5 V" Input_Imped="1000 MΩ" Invert_Inputs="false" Num_Inputs="2 _Inputs" Out_High_V="5 V" Out_Low_V="0 V" Out_Imped="40 Ω" initHigh="false" Inverted="false" Open_Collector="false" Tpd_ps="10 ns" Tr_ps="3 ns" Tf_ps="4 ns" />
+
+<item itemtype="Buffer" CircId="Buffer-20" mainComp="false" Show_id="false" Show_Val="false" Pos="-340,-308" rotation="0" hflip="1" vflip="1" label="Buffer-20" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Input_High_V="2.5 V" Input_Low_V="2.5 V" Input_Imped="1000 MΩ" Invert_Inputs="false" Out_High_V="5 V" Out_Low_V="0 V" Out_Imped="40 Ω" initHigh="false" Inverted="true" Open_Collector="false" Tristate="false" Tpd_ps="10 ns" Tr_ps="3 ns" Tf_ps="4 ns" />
+
+<item itemtype="Or Gate" CircId="Or Gate-21" mainComp="false" Show_id="false" Show_Val="false" Pos="-240,-280" rotation="0" hflip="1" vflip="1" label="Or Gate-21" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Input_High_V="2.5 V" Input_Low_V="2.5 V" Input_Imped="1000 MΩ" Invert_Inputs="false" Num_Inputs="2 _Inputs" Out_High_V="5 V" Out_Low_V="0 V" Out_Imped="40 Ω" initHigh="false" Inverted="false" Open_Collector="false" Tpd_ps="10 ns" Tr_ps="3 ns" Tf_ps="4 ns" />
+
+<item itemtype="Memory" CircId="Memory-27" mainComp="false" Show_id="false" Show_Val="false" Pos="236,-28" rotation="0" hflip="1" vflip="1" label="RAM" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Address_Bits="15 _bits" Data_Bits="8 _bits" Persistent="false" Asynch="true" Input_High_V="2.5 V" Input_Low_V="2.5 V" Input_Imped="1000 MΩ" Out_High_V="5 V" Out_Low_V="0 V" Out_Imped="40 Ω" Inverted="false" Open_Collector="false" pd_n="1 _Gates" Tpd_ps="10 ns" Tr_ps="3 ns" Tf_ps="4 ns" />
+
+<item itemtype="Buffer" CircId="Buffer-58" mainComp="false" Show_id="false" Show_Val="false" Pos="-392,-164" rotation="-90" hflip="1" vflip="1" label="Buffer-58" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Input_High_V="2.5 V" Input_Low_V="2.5 V" Input_Imped="1000 MΩ" Invert_Inputs="false" Out_High_V="5 V" Out_Low_V="0 V" Out_Imped="40 Ω" initHigh="false" Inverted="true" Open_Collector="false" Tristate="false" Tpd_ps="10 ns" Tr_ps="3 ns" Tf_ps="4 ns" />
+
+<item itemtype="Or Gate" CircId="Or Gate-59" mainComp="false" Show_id="false" Show_Val="false" Pos="-448,-288" rotation="0" hflip="1" vflip="1" label="Or Gate-59" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Input_High_V="2.5 V" Input_Low_V="2.5 V" Input_Imped="1000 MΩ" Invert_Inputs="false" Num_Inputs="2 _Inputs" Out_High_V="5 V" Out_Low_V="0 V" Out_Imped="40 Ω" initHigh="false" Inverted="false" Open_Collector="false" Tpd_ps="10 ns" Tr_ps="3 ns" Tf_ps="4 ns" />
+
+<item itemtype="Or Gate" CircId="Or Gate-60" mainComp="false" Show_id="false" Show_Val="false" Pos="-484,-224" rotation="-90" hflip="1" vflip="1" label="Or Gate-60" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Input_High_V="2.5 V" Input_Low_V="2.5 V" Input_Imped="1000 MΩ" Invert_Inputs="false" Num_Inputs="2 _Inputs" Out_High_V="5 V" Out_Low_V="0 V" Out_Imped="40 Ω" initHigh="false" Inverted="false" Open_Collector="false" Tpd_ps="10 ns" Tr_ps="3 ns" Tf_ps="4 ns" />
+
+<item itemtype="LAnalizer" CircId="LAnalizer-64" mainComp="false" Show_id="false" Show_Val="false" Pos="-596,-388" rotation="0" hflip="1" vflip="1" label="LAnalizer-64" idLabPos="-90,-100" labelrot="0" valLabPos="-16,20" valLabRot="0" Basic_X="135 _px" Basic_Y="135 _px" BufferSize="100000" connectGnd="true" InputImped="10 MΩ" TimDiv="1000000000" TimPos="0" VolDiv="0.15" Tunnels=",,,,,,,," Trigger="9" TimeStep="1000 _ps" AutoExport="false" TresholdR="2.5 V" Bus="false,false,false,false,false,false,false,false," TresholdF="2.5 V" />
+
+<item itemtype="Node" CircId="Node-13" mainComp="false" Pos="36,4" />
+
+<item itemtype="Node" CircId="Node-14" mainComp="false" Pos="36,20" />
+
+<item itemtype="Node" CircId="Node-15" mainComp="false" Pos="-352,20" />
+
+<item itemtype="Node" CircId="Node-16" mainComp="false" Pos="36,12" />
+
+<item itemtype="Node" CircId="Node-18" mainComp="false" Pos="36,-128" />
+
+<item itemtype="Node" CircId="Node-28" mainComp="false" Pos="-4,-28" />
+
+<item itemtype="Node" CircId="Node-29" mainComp="false" Pos="-12,-84" />
+
+<item itemtype="Node" CircId="Node-30" mainComp="false" Pos="-24,-76" />
+
+<item itemtype="Node" CircId="Node-31" mainComp="false" Pos="-36,-68" />
+
+<item itemtype="Node" CircId="Node-32" mainComp="false" Pos="-44,-60" />
+
+<item itemtype="Node" CircId="Node-33" mainComp="false" Pos="-52,-116" />
+
+<item itemtype="Node" CircId="Node-34" mainComp="false" Pos="-60,-104" />
+
+<item itemtype="Node" CircId="Node-35" mainComp="false" Pos="-68,-84" />
+
+<item itemtype="Node" CircId="Node-36" mainComp="false" Pos="-88,-92" />
+
+<item itemtype="Node" CircId="Node-37" mainComp="false" Pos="-108,-100" />
+
+<item itemtype="Node" CircId="Node-38" mainComp="false" Pos="-128,-108" />
+
+<item itemtype="Node" CircId="Node-39" mainComp="false" Pos="-368,-108" />
+
+<item itemtype="Node" CircId="Node-40" mainComp="false" Pos="-336,-100" />
+
+<item itemtype="Node" CircId="Node-42" mainComp="false" Pos="-316,-92" />
+
+<item itemtype="Node" CircId="Node-44" mainComp="false" Pos="116,-276" />
+
+<item itemtype="Node" CircId="Node-45" mainComp="false" Pos="124,-268" />
+
+<item itemtype="Node" CircId="Node-46" mainComp="false" Pos="96,-260" />
+
+<item itemtype="Node" CircId="Node-47" mainComp="false" Pos="132,-252" />
+
+<item itemtype="Node" CircId="Node-48" mainComp="false" Pos="140,-244" />
+
+<item itemtype="Node" CircId="Node-49" mainComp="false" Pos="148,-236" />
+
+<item itemtype="Node" CircId="Node-50" mainComp="false" Pos="156,-228" />
+
+<item itemtype="Node" CircId="Node-51" mainComp="false" Pos="164,-220" />
+
+<item itemtype="Node" CircId="Node-55" mainComp="false" Pos="-304,-84" />
+
+<item itemtype="Node" CircId="Node-56" mainComp="false" Pos="12,44" />
+
+<item itemtype="Node" CircId="Node-61" mainComp="false" Pos="-292,-132" />
+
+<item itemtype="Node" CircId="Node-62" mainComp="false" Pos="-284,36" />
+
+<item itemtype="Node" CircId="Node-63" mainComp="false" Pos="-312,-308" />
+
+<item itemtype="Node" CircId="Node-66" mainComp="false" Pos="-684,-68" />
+
+<item itemtype="Node" CircId="Node-67" mainComp="false" Pos="-168,44" />
+
+<item itemtype="Node" CircId="Node-68" mainComp="false" Pos="-156,36" />
+
+<item itemtype="Connector" uid="Connector-40" startpinid="Node-13-2" endpinid="Z80-1-CPORT0RESET" pointList="36,4,-184,4" />
+
+<item itemtype="Connector" uid="Connector-43" startpinid="Node-14-2" endpinid="Z80-1-CPORT0WAIT" pointList="36,20,-184,20" />
+
+<item itemtype="Connector" uid="Connector-44" startpinid="Node-15-1" endpinid="Z80-1-CPORT0NMI" pointList="-352,20,-248,20" />
+
+<item itemtype="Connector" uid="Connector-45" startpinid="Node-14-1" endpinid="Node-15-0" pointList="36,20,36,76,-352,76,-352,20" />
+
+<item itemtype="Connector" uid="Connector-46" startpinid="Node-15-2" endpinid="Z80-1-CPORT0INT" pointList="-352,20,-352,12,-248,12" />
+
+<item itemtype="Connector" uid="Connector-47" startpinid="Z80-1-CPORT0BUSRQ" endpinid="Node-16-1" pointList="-184,12,36,12" />
+
+<item itemtype="Connector" uid="Connector-48" startpinid="Node-13-1" endpinid="Node-16-0" pointList="36,4,36,12" />
+
+<item itemtype="Connector" uid="Connector-49" startpinid="Node-16-2" endpinid="Node-14-0" pointList="36,12,36,20" />
+
+<item itemtype="Connector" uid="Connector-77" startpinid="Memory-9-Pin_We" endpinid="Node-18-1" pointList="12,-220,4,-220,4,-128,36,-128" />
+
+<item itemtype="Connector" uid="Connector-78" startpinid="Fixed Voltage-3-outnod" endpinid="Node-18-0" pointList="36,-160,36,-128" />
+
+<item itemtype="Connector" uid="Connector-79" startpinid="Node-18-2" endpinid="Node-13-0" pointList="36,-128,36,4" />
+
+<item itemtype="Connector" uid="Connector-99" startpinid="Or Gate-19-out" endpinid="Or Gate-21-in1" pointList="-288,-176,-288,-276,-256,-276" />
+
+<item itemtype="Connector" uid="Connector-100" startpinid="Or Gate-21-out" endpinid="Memory-9-Pin_Cs" pointList="-224,-280,-120,-280,-120,-188,76,-188,76,-212,60,-212" />
+
+<item itemtype="Connector" uid="Connector-102" startpinid="Z80-1-CPORT0RFSH" endpinid="Buffer-20-in0" pointList="-184,-12,-156,-12,-156,-208,-392,-208,-392,-308,-356,-308" />
+
+<item itemtype="Connector" uid="Connector-103" startpinid="Memory-27-in0" endpinid="Node-28-1" pointList="212,-92,108,-92,108,-28,-4,-28" />
+
+<item itemtype="Connector" uid="Connector-104" startpinid="Memory-9-in0" endpinid="Node-28-0" pointList="12,-340,-4,-340,-4,-28" />
+
+<item itemtype="Connector" uid="Connector-105" startpinid="Node-28-2" endpinid="Z80-1-PORTA0" pointList="-4,-28,-184,-28" />
+
+<item itemtype="Connector" uid="Connector-106" startpinid="Memory-27-in1" endpinid="Node-29-1" pointList="212,-84,-12,-84" />
+
+<item itemtype="Connector" uid="Connector-107" startpinid="Memory-9-in1" endpinid="Node-29-0" pointList="12,-332,-12,-332,-12,-84" />
+
+<item itemtype="Connector" uid="Connector-108" startpinid="Node-29-2" endpinid="Z80-1-PORTA1" pointList="-12,-84,-12,-36,-184,-36" />
+
+<item itemtype="Connector" uid="Connector-109" startpinid="Memory-27-in2" endpinid="Node-30-1" pointList="212,-76,-24,-76" />
+
+<item itemtype="Connector" uid="Connector-110" startpinid="Memory-9-in2" endpinid="Node-30-0" pointList="12,-324,-24,-324,-24,-76" />
+
+<item itemtype="Connector" uid="Connector-111" startpinid="Node-30-2" endpinid="Z80-1-PORTA2" pointList="-24,-76,-24,-44,-184,-44" />
+
+<item itemtype="Connector" uid="Connector-112" startpinid="Memory-27-in3" endpinid="Node-31-1" pointList="212,-68,-36,-68" />
+
+<item itemtype="Connector" uid="Connector-113" startpinid="Memory-9-in3" endpinid="Node-31-0" pointList="12,-316,-36,-316,-36,-68" />
+
+<item itemtype="Connector" uid="Connector-114" startpinid="Node-31-2" endpinid="Z80-1-PORTA3" pointList="-36,-68,-36,-52,-184,-52" />
+
+<item itemtype="Connector" uid="Connector-115" startpinid="Memory-27-in4" endpinid="Node-32-1" pointList="212,-60,-44,-60" />
+
+<item itemtype="Connector" uid="Connector-116" startpinid="Memory-9-in4" endpinid="Node-32-0" pointList="12,-308,-44,-308,-44,-60" />
+
+<item itemtype="Connector" uid="Connector-117" startpinid="Node-32-2" endpinid="Z80-1-PORTA4" pointList="-44,-60,-184,-60" />
+
+<item itemtype="Connector" uid="Connector-118" startpinid="Memory-27-in5" endpinid="Node-33-1" pointList="212,-52,20,-52,20,-116,-52,-116" />
+
+<item itemtype="Connector" uid="Connector-119" startpinid="Memory-9-in5" endpinid="Node-33-0" pointList="12,-300,-52,-300,-52,-116" />
+
+<item itemtype="Connector" uid="Connector-120" startpinid="Node-33-2" endpinid="Z80-1-PORTA5" pointList="-52,-116,-52,-68,-184,-68" />
+
+<item itemtype="Connector" uid="Connector-121" startpinid="Memory-27-in6" endpinid="Node-34-1" pointList="212,-44,56,-44,56,-104,-60,-104" />
+
+<item itemtype="Connector" uid="Connector-122" startpinid="Memory-9-in6" endpinid="Node-34-0" pointList="12,-292,-60,-292,-60,-104" />
+
+<item itemtype="Connector" uid="Connector-123" startpinid="Node-34-2" endpinid="Z80-1-PORTA6" pointList="-60,-104,-60,-76,-184,-76" />
+
+<item itemtype="Connector" uid="Connector-124" startpinid="Memory-27-in7" endpinid="Node-35-1" pointList="212,-36,52,-36,52,-12,-68,-12,-68,-84" />
+
+<item itemtype="Connector" uid="Connector-125" startpinid="Memory-9-in7" endpinid="Node-35-0" pointList="12,-284,-68,-284,-68,-84" />
+
+<item itemtype="Connector" uid="Connector-126" startpinid="Node-35-2" endpinid="Z80-1-PORTA7" pointList="-68,-84,-184,-84" />
+
+<item itemtype="Connector" uid="Connector-127" startpinid="Memory-27-in8" endpinid="Node-36-1" pointList="212,-28,176,-28,176,-12,60,-12,60,-4,-88,-4,-88,-92" />
+
+<item itemtype="Connector" uid="Connector-128" startpinid="Memory-9-in8" endpinid="Node-36-0" pointList="12,-276,-76,-276,-76,-92,-88,-92" />
+
+<item itemtype="Connector" uid="Connector-129" startpinid="Node-36-2" endpinid="Z80-1-PORTA8" pointList="-88,-92,-184,-92" />
+
+<item itemtype="Connector" uid="Connector-130" startpinid="Memory-27-in9" endpinid="Node-37-1" pointList="212,-20,180,-20,180,-4,68,-4,68,56,-108,56,-108,-100" />
+
+<item itemtype="Connector" uid="Connector-131" startpinid="Memory-9-in9" endpinid="Node-37-0" pointList="12,-268,-84,-268,-84,-100,-108,-100" />
+
+<item itemtype="Connector" uid="Connector-132" startpinid="Node-37-2" endpinid="Z80-1-PORTA9" pointList="-108,-100,-184,-100" />
+
+<item itemtype="Connector" uid="Connector-133" startpinid="Memory-27-in10" endpinid="Node-38-1" pointList="212,-12,188,-12,188,4,76,4,76,88,-128,88,-128,-108" />
+
+<item itemtype="Connector" uid="Connector-134" startpinid="Memory-9-in10" endpinid="Node-38-0" pointList="12,-260,-92,-260,-92,-108,-128,-108" />
+
+<item itemtype="Connector" uid="Connector-135" startpinid="Node-38-2" endpinid="Z80-1-PORTA10" pointList="-128,-108,-184,-108" />
+
+<item itemtype="Connector" uid="Connector-136" startpinid="Memory-27-in11" endpinid="Node-39-1" pointList="212,-4,184,-4,184,88,-368,88,-368,-108" />
+
+<item itemtype="Connector" uid="Connector-137" startpinid="Memory-9-in11" endpinid="Node-39-0" pointList="12,-252,-452,-252,-452,-108,-368,-108" />
+
+<item itemtype="Connector" uid="Connector-138" startpinid="Node-39-2" endpinid="Z80-1-PORTA11" pointList="-368,-108,-248,-108" />
+
+<item itemtype="Connector" uid="Connector-139" startpinid="Memory-27-in12" endpinid="Node-40-1" pointList="212,4,196,4,196,100,-336,100,-336,-100" />
+
+<item itemtype="Connector" uid="Connector-140" startpinid="Memory-9-in12" endpinid="Node-40-0" pointList="12,-244,-444,-244,-444,-100,-336,-100" />
+
+<item itemtype="Connector" uid="Connector-141" startpinid="Node-40-2" endpinid="Z80-1-PORTA12" pointList="-336,-100,-248,-100" />
+
+<item itemtype="Connector" uid="Connector-146" startpinid="Memory-9-in13" endpinid="Node-42-0" pointList="12,-236,-436,-236,-436,-92,-316,-92" />
+
+<item itemtype="Connector" uid="Connector-147" startpinid="Node-42-2" endpinid="Z80-1-PORTA13" pointList="-316,-92,-248,-92" />
+
+<item itemtype="Connector" uid="Connector-151" startpinid="Memory-27-out0" endpinid="Node-44-1" pointList="260,-92,260,-276,116,-276" />
+
+<item itemtype="Connector" uid="Connector-152" startpinid="Memory-9-out0" endpinid="Node-44-0" pointList="60,-340,116,-340,116,-276" />
+
+<item itemtype="Connector" uid="Connector-154" startpinid="Memory-27-out1" endpinid="Node-45-1" pointList="260,-84,268,-84,268,-268,124,-268" />
+
+<item itemtype="Connector" uid="Connector-155" startpinid="Memory-9-out1" endpinid="Node-45-0" pointList="60,-332,124,-332,124,-268" />
+
+<item itemtype="Connector" uid="Connector-156" startpinid="Node-45-2" endpinid="Z80-1-PORTD1" pointList="124,-268,124,136,-392,136,-392,4,-248,4" />
+
+<item itemtype="Connector" uid="Connector-158" startpinid="Memory-27-out2" endpinid="Node-46-1" pointList="260,-76,280,-76,280,-260,96,-260" />
+
+<item itemtype="Connector" uid="Connector-159" startpinid="Memory-9-out2" endpinid="Node-46-0" pointList="60,-324,96,-324,96,-260" />
+
+<item itemtype="Connector" uid="Connector-160" startpinid="Node-46-2" endpinid="Z80-1-PORTD2" pointList="96,-260,96,200,-384,200,-384,-20,-248,-20" />
+
+<item itemtype="Connector" uid="Connector-161" startpinid="Memory-27-out3" endpinid="Node-47-1" pointList="260,-68,288,-68,288,-252,132,-252" />
+
+<item itemtype="Connector" uid="Connector-162" startpinid="Memory-9-out3" endpinid="Node-47-0" pointList="60,-316,132,-316,132,-252" />
+
+<item itemtype="Connector" uid="Connector-163" startpinid="Node-47-2" endpinid="Z80-1-PORTD3" pointList="132,-252,132,148,-404,148,-404,-52,-248,-52" />
+
+<item itemtype="Connector" uid="Connector-164" startpinid="Memory-27-out4" endpinid="Node-48-1" pointList="260,-60,300,-60,300,-244,140,-244" />
+
+<item itemtype="Connector" uid="Connector-165" startpinid="Memory-9-out4" endpinid="Node-48-0" pointList="60,-308,140,-308,140,-244" />
+
+<item itemtype="Connector" uid="Connector-166" startpinid="Node-48-2" endpinid="Z80-1-PORTD4" pointList="140,-244,140,160,-412,160,-412,-60,-248,-60" />
+
+<item itemtype="Connector" uid="Connector-167" startpinid="Memory-27-out5" endpinid="Node-49-1" pointList="260,-52,308,-52,308,-236,148,-236" />
+
+<item itemtype="Connector" uid="Connector-168" startpinid="Memory-9-out5" endpinid="Node-49-0" pointList="60,-300,148,-300,148,-236" />
+
+<item itemtype="Connector" uid="Connector-169" startpinid="Node-49-2" endpinid="Z80-1-PORTD5" pointList="148,-236,148,172,-420,172,-420,-44,-248,-44" />
+
+<item itemtype="Connector" uid="Connector-170" startpinid="Memory-27-out6" endpinid="Node-50-1" pointList="260,-44,312,-44,312,-228,156,-228" />
+
+<item itemtype="Connector" uid="Connector-171" startpinid="Memory-9-out6" endpinid="Node-50-0" pointList="60,-292,156,-292,156,-228" />
+
+<item itemtype="Connector" uid="Connector-172" startpinid="Node-50-2" endpinid="Z80-1-PORTD6" pointList="156,-228,156,184,-428,184,-428,-36,-248,-36" />
+
+<item itemtype="Connector" uid="Connector-173" startpinid="Memory-27-out7" endpinid="Node-51-1" pointList="260,-36,324,-36,324,-220,164,-220" />
+
+<item itemtype="Connector" uid="Connector-174" startpinid="Memory-9-out7" endpinid="Node-51-0" pointList="60,-284,164,-284,164,-220" />
+
+<item itemtype="Connector" uid="Connector-175" startpinid="Node-51-2" endpinid="Z80-1-PORTD7" pointList="164,-220,164,192,-440,192,-440,-12,-248,-12" />
+
+<item itemtype="Connector" uid="Connector-153" startpinid="Node-44-2" endpinid="Z80-1-PORTD0" pointList="116,-276,116,128,-384,128,-384,-4,-248,-4" />
+
+<item itemtype="Connector" uid="Connector-191" startpinid="Memory-27-in14" endpinid="Node-55-1" pointList="212,20,52,20,52,120,-304,120,-304,-84" />
+
+<item itemtype="Connector" uid="Connector-192" startpinid="Memory-9-in14" endpinid="Node-55-0" pointList="12,-228,-428,-228,-428,-84,-304,-84" />
+
+<item itemtype="Connector" uid="Connector-193" startpinid="Node-55-2" endpinid="Z80-1-PORTA14" pointList="-304,-84,-248,-84" />
+
+<item itemtype="Connector" uid="Connector-194" startpinid="Memory-27-Pin_outEnable" endpinid="Node-56-1" pointList="212,36,20,36,20,44,12,44" />
+
+<item itemtype="Connector" uid="Connector-195" startpinid="Memory-9-Pin_outEnable" endpinid="Node-56-0" pointList="12,-212,12,44" />
+
+<item itemtype="Connector" uid="Connector-176" startpinid="Memory-27-in13" endpinid="Node-42-1" pointList="212,12,172,12,172,112,-316,112,-316,-92" />
+
+<item itemtype="Connector" uid="Connector-202" startpinid="Node-61-1" endpinid="Buffer-58-in0" pointList="-292,-132,-392,-132,-392,-148" />
+
+<item itemtype="Connector" uid="Connector-203" startpinid="Z80-1-PORTA15" endpinid="Node-61-0" pointList="-248,-76,-292,-76,-292,-132" />
+
+<item itemtype="Connector" uid="Connector-204" startpinid="Node-61-2" endpinid="Or Gate-19-in0" pointList="-292,-132,-292,-144" />
+
+<item itemtype="Connector" uid="Connector-205" startpinid="Buffer-58-out" endpinid="Or Gate-60-in0" pointList="-392,-180,-488,-180,-488,-208" />
+
+<item itemtype="Connector" uid="Connector-206" startpinid="Node-62-1" endpinid="Or Gate-60-in1" pointList="-284,36,-516,36,-516,-192,-480,-192,-480,-208" />
+
+<item itemtype="Connector" uid="Connector-207" startpinid="Z80-1-CPORT0MREQ" endpinid="Node-62-0" pointList="-248,36,-284,36" />
+
+<item itemtype="Connector" uid="Connector-208" startpinid="Node-62-2" endpinid="Or Gate-19-in1" pointList="-284,36,-284,-144" />
+
+<item itemtype="Connector" uid="Connector-210" startpinid="Node-63-1" endpinid="Or Gate-59-in1" pointList="-312,-308,-312,-264,-472,-264,-472,-284,-464,-284" />
+
+<item itemtype="Connector" uid="Connector-211" startpinid="Or Gate-21-in0" endpinid="Node-63-0" pointList="-256,-284,-276,-284,-276,-308,-312,-308" />
+
+<item itemtype="Connector" uid="Connector-212" startpinid="Node-63-2" endpinid="Buffer-20-out" pointList="-312,-308,-324,-308" />
+
+<item itemtype="Connector" uid="Connector-213" startpinid="Or Gate-59-out" endpinid="Memory-27-Pin_Cs" pointList="-432,-288,-408,-288,-408,-352,336,-352,336,36,260,36" />
+
+<item itemtype="Connector" uid="Connector-209" startpinid="Or Gate-60-out" endpinid="Or Gate-59-in0" pointList="-484,-240,-484,-292,-464,-292" />
+
+<item itemtype="Connector" uid="Connector-218" startpinid="LAnalizer-64-Pin0" endpinid="Node-66-1" pointList="-684,-452,-768,-452,-768,-144,-684,-144,-684,-68" />
+
+<item itemtype="Connector" uid="Connector-219" startpinid="Clock-2-outnod" endpinid="Node-66-0" pointList="-744,-68,-684,-68" />
+
+<item itemtype="Connector" uid="Connector-220" startpinid="Node-66-2" endpinid="Z80-1-CPORT0CLK" pointList="-684,-68,-248,-68" />
+
+<item itemtype="Connector" uid="Connector-221" startpinid="Z80-1-CPORT0HALT" endpinid="LAnalizer-64-Pin1" pointList="-248,28,-724,28,-724,-220,-784,-220,-784,-436,-684,-436" />
+
+<item itemtype="Connector" uid="Connector-222" startpinid="LAnalizer-64-Pin2" endpinid="Node-67-1" pointList="-684,-420,-800,-420,-800,-100,-536,-100,-536,64,-168,64,-168,44" />
+
+<item itemtype="Connector" uid="Connector-223" startpinid="Node-56-2" endpinid="Node-67-0" pointList="12,44,-168,44" />
+
+<item itemtype="Connector" uid="Connector-224" startpinid="Node-67-2" endpinid="Z80-1-CPORT0RD" pointList="-168,44,-184,44" />
+
+<item itemtype="Connector" uid="Connector-226" startpinid="LAnalizer-64-Pin3" endpinid="Node-68-1" pointList="-684,-404,-816,-404,-816,168,-156,168,-156,36" />
+
+<item itemtype="Connector" uid="Connector-227" startpinid="Z80-1-CPORT0WR" endpinid="Node-68-0" pointList="-184,36,-156,36" />
+
+<item itemtype="Connector" uid="Connector-228" startpinid="Node-68-2" endpinid="Memory-27-Pin_We" pointList="-156,36,-8,36,-8,68,188,68,188,28,212,28" />
+
+</circuit>
