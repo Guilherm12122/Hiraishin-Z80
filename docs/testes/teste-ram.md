@@ -1,6 +1,10 @@
 # Primeiro teste pontual de RAM
 
-Estado: preparado, ainda nao carregado nem executado no circuito do autor.
+Estado: a versao original passou na simulacao e repetiu o resultado em nova
+partida, conforme capturas enviadas pelo autor em 30/10/2026: A=00h,
+PC=003Fh e RAM no indice 0001h=00h. Em seguida, o autor confirmou o teste
+com falha provocada (`CP 054h`) e a restauracao do teste normal. O fonte e
+o HEX versionados mantem a comparacao normal `CP 055h`.
 
 ## Arquivos
 
@@ -8,10 +12,10 @@ Estado: preparado, ainda nao carregado nem executado no circuito do autor.
 - Fonte: `../../firmware/testes/teste-ram.asm`.
 - Imagem Intel HEX: `../../firmware/testes/teste-ram.hex`.
 
-O codigo ocupa 65 bytes a partir de 0000h na ROM. A imagem HEX foi
-codificada diretamente a partir das instrucoes do fonte; ainda nao foi
-comparada com a saida de um montador externo. Os checksums e destinos dos
-saltos foram conferidos localmente. Isso nao substitui a execucao no Z80.
+O codigo ocupa 65 bytes a partir de 0000h na ROM. A imagem inicial foi
+codificada diretamente; agora o HEX e gerado pelo SjASMPlus 1.24.0 a partir
+do fonte salvo. Consulte [montador.md](montador.md) para repetir a montagem.
+Na versao de falha controlada, o byte em 001Eh e 54h em vez de 55h.
 
 ## O que faz
 
@@ -62,6 +66,7 @@ de falha. Se a propria escrita do resultado falhar, conferir A e os sinais.
 
 Nao e um teste completo dos 32 KiB, de todas as linhas de endereco ou de
 todos os padroes de dados. Nao comprova temporizacao ou niveis dos CIs reais.
-Ainda registrar: resultado observado, captura do analisador, valores da RAM,
-partida repetida e teste com falha provocada. Nao ha evidencia de aprovacao
+Ainda consolidar as capturas no repositorio e conferir os demais valores da
+RAM. O resultado da falha provocada e da restauracao foi relatado pelo autor,
+sem captura adicional nesta etapa. Nao ha evidencia de aprovacao
 do hardware fisico nem do bootloader/SO nesta etapa.

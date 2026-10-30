@@ -9,8 +9,10 @@ validado. O clock inicial de estudo está em 1 kHz.
 
 O [primeiro teste pontual de RAM](../docs/testes/teste-ram.md) tem
 [fonte Assembly](../firmware/testes/teste-ram.asm) e
-[imagem Intel HEX](../firmware/testes/teste-ram.hex). O teste ainda não foi
-carregado nem executado nesse circuito.
+[imagem Intel HEX](../firmware/testes/teste-ram.hex). A versão normal passou
+na simulação e repetiu o resultado após reiniciar. O autor também confirmou
+a falha controlada e a restauração do teste normal em 30/10/2026. Os limites
+e as evidências estão registrados no documento do teste.
 
 ## Exemplo Z80 do SimulIDE — correção local
 
