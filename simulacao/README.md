@@ -37,3 +37,10 @@ z80-mini-diagnostico.sim1 preserva um ensaio intermediário sem resultado funcio
 ## Resultado observado
 
 Em 28/10/2026, no SimulIDE instalado, foi observada a mensagem Hello Z80! no LCD a 1 MHz. As demais mensagens não apareceram durante a observação; a sequência completa do programa original ainda requer diagnóstico. Isso comprova a primeira saída, não a validação integral do exemplo, da RAM ou do projeto Hiraishin.
+
+## Primeiro envio serial pelo Z80
+
+`hiraishin-serial-tx.sim1` contem o circuito com latch, decodificador e Uno
+para enviar um byte do Z80 ao terminal. O autor confirmou a letra A na
+simulacao em 03/11/2026. Fontes, HEX, ligacoes, reproducao e limites estao em
+[teste-serial-tx.md](../docs/testes/teste-serial-tx.md).
